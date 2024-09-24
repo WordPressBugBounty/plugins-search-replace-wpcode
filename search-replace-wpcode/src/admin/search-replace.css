@@ -1,0 +1,59 @@
+.wsrw-search-results {
+	width: 100%;
+
+	pre {
+		white-space: pre-wrap;
+		word-wrap: break-word;
+	}
+
+	.wsrw-highlight {
+		background-color: #FFFF00;
+
+		&.wsrw-highlight-red {
+			background-color: #fa9898;
+		}
+
+		&.wsrw-highlight-green {
+			background-color: rgb(119, 213, 119);
+		}
+	}
+
+}
+
+.wsrw-new-value,
+.wsrw-old-value {
+	width: 30%;
+}
+
+.wsrw-form-row {
+	margin: 15px 0;
+}
+
+#wsrw-results {
+	height: 500px;
+	overflow: scroll;
+	border: 1px solid #c3c4c7;
+
+	table.widefat {
+		border: none;
+	}
+}
+
+.wsrw-progress-bar {
+	background: #c4cbcf;
+	width: 100%;
+	height: 26px;
+	border-radius: 5px;
+	margin: 10px 0;
+
+	.wsrw-progress-bar-inner {
+		background: var(--wsrw-color-primary);
+		height: 100%;
+		border-radius: 5px;
+		width: 0;
+	}
+}
+
+.wsrw-progress-text {
+	min-height: 19px;
+}
