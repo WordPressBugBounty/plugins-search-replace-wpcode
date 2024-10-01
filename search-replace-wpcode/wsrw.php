@@ -3,7 +3,7 @@
  * Plugin Name: Search & Replace Everything
  * Plugin URI: https://wpcode.com/
  * Description: Search & Replace text and images across your entire WordPress database with a simple, powerful interface.
- * Version: 1.0.3
+ * Version: 1.0.4
  * Author: WPCode
  * Author URI: https://wpcode.com
  * License: GPL2
@@ -149,6 +149,13 @@ class WSRW_Main {
 	public $admin_page_loader;
 
 	/**
+	 * The admin notices instance.
+	 *
+	 * @var WSRW_Notice
+	 */
+	public $notice;
+
+	/**
 	 * The settings instance.
 	 *
 	 * @var WSRW_Settings
@@ -211,6 +218,7 @@ class WSRW_Main {
 			require_once WSRW_PLUGIN_PATH . 'includes/admin/admin-scripts.php';
 			require_once WSRW_PLUGIN_PATH . 'includes/class-wsrw-search-replace.php';
 			require_once WSRW_PLUGIN_PATH . 'includes/class-wsrw-install.php';
+			require_once WSRW_PLUGIN_PATH . 'includes/admin/class-wsrw-notice.php';
 			require_once WSRW_PLUGIN_PATH . 'includes/admin/class-wsrw-review.php';
 		}
 
@@ -225,9 +233,12 @@ class WSRW_Main {
 	 * @return void
 	 */
 	public function load_components() {
-		if ( is_admin() || wp_doing_ajax() ) {
+		if ( is_admin() || wp_doing_ajax() || defined( 'DOING_CRON' ) && DOING_CRON ) {
 			$this->settings          = new WSRW_Settings();
 			$this->admin_page_loader = new WSRW_Admin_Page_Loader();
+			$this->notice            = new WSRW_Notice();
+
+			new WSRW_Search_Replace();
 		}
 	}
 }

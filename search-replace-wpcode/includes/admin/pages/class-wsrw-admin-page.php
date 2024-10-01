@@ -119,10 +119,12 @@ abstract class WSRW_Admin_Page {
 			wp_die( esc_html__( 'You do not have permission to access this page.', 'search-replace-wpcode' ) );
 		}
 		remove_all_actions( 'admin_notices' );
+		remove_all_actions( 'all_admin_notices' );
 		add_action( 'wsrw_admin_page', array( $this, 'output' ) );
 		add_action( 'wsrw_admin_page', array( $this, 'output_footer' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'page_scripts' ) );
 		add_filter( 'admin_body_class', array( $this, 'page_specific_body_class' ) );
+		add_action( 'in_admin_footer', array( $this, 'wsrw_footer' ) );
 
 		$this->setup_views();
 		$this->set_current_view();
@@ -136,7 +138,6 @@ abstract class WSRW_Admin_Page {
 	 * @return void
 	 */
 	public function page_hooks() {
-
 	}
 
 	/**
@@ -164,7 +165,6 @@ abstract class WSRW_Admin_Page {
 	 * @return void
 	 */
 	protected function setup_views() {
-
 	}
 
 	/**
@@ -228,6 +228,62 @@ abstract class WSRW_Admin_Page {
 	}
 
 	/**
+	 * Output of the footer markup for admin pages.
+	 *
+	 * @return void
+	 */
+	public function wsrw_footer() {
+
+		$links       = array(
+			array(
+				'url'    => class_exists( 'WSRW_Main_Premium' ) ? wsrw_utm_url( 'https://library.wpcode.com/account/support/', 'plugin-footer', 'contact-support' ) : 'https://wordpress.org/support/plugin/search-replace-wpcode/',
+				'text'   => __( 'Support', 'search-replace-wpcode' ),
+				'target' => '_blank',
+			),
+			array(
+				'url'    => wsrw_utm_url( 'https://wpcode.com/docs/', 'plugin-footer', 'documentation' ),
+				'text'   => __( 'Docs', 'search-replace-wpcode' ),
+				'target' => '_blank',
+			),
+		);
+		$heart       = '♥';
+		$team        = 'WPCode';
+		$links_count = count( $links );
+		?>
+
+		<div class="wsrw-footer">
+			<p><?php printf( esc_html__( 'Made with %1$s by the %2$s team', 'search-replace-wpcode' ), esc_html( $heart ), esc_html( $team ) ); ?></p>
+
+			<ul class="wsrw-footer-links">
+				<?php foreach ( $links as $key => $item ) : ?>
+					<li>
+						<a href="<?php echo esc_attr( $item['url'] ); ?>" target="<?php echo esc_attr( $item['target'] ); ?>"><?php echo esc_html( $item['text'] ); ?></a>
+						<?php if ( $links_count !== $key + 1 ) : ?>
+							<span>/</span>
+						<?php endif; ?>
+					</li>
+				<?php endforeach; ?>
+			</ul>
+			<ul class="wsrw-footer-social">
+				<li>
+					<a href="https://www.facebook.com/groups/wpbeginner" target="_blank" rel="noopener noreferrer">
+						<?php wsrw_icon( 'facebook', 17, 16 ); ?>
+						<span class="screen-reader-text">Facebook</span>
+					</a>
+				</li>
+				<li>
+					<a href="https://twitter.com/wpcodelibrary" target="_blank" rel="noopener noreferrer">
+						<?php wsrw_icon( 'twitter', 17, 16 ); ?>
+						<span class="screen-reader-text">Twitter</span>
+					</a>
+				</li>
+			</ul>
+		</div>
+
+		<?php
+	}
+
+	/**
 	 * Output footer markup, mostly used for overlays that are fixed.
 	 *
 	 * @return void
@@ -276,7 +332,7 @@ abstract class WSRW_Admin_Page {
 	 */
 	public function output_header_right() {
 		$campaign = ! empty( $this->view ) ? $this->view : $this->page_slug;
-		$url      = wsrw_utm_url( 'https://wpcode.com/sr-support/', 'admin-header-help', $campaign );
+		$url      = class_exists( 'WSRW_Main_Premium' ) ? wsrw_utm_url( 'https://library.wpcode.com/account/support/', 'admin-header-help', $campaign ) : 'https://wordpress.org/support/plugin/search-replace-wpcode/';
 		?>
 		<a class="wsrw-text-button-icon wsrw-show-help" href="<?php echo esc_url( $url ); ?>" target="_blank" rel="noreferrer noopener">
 			<?php wsrw_icon( 'help', 21 ); ?>
@@ -292,7 +348,6 @@ abstract class WSRW_Admin_Page {
 	 * @return void
 	 */
 	public function output_header_bottom() {
-
 	}
 
 	/**
@@ -400,6 +455,8 @@ abstract class WSRW_Admin_Page {
 		if ( ! empty( $this->view ) ) {
 			$body_class .= ' ' . $this->page_slug . '-' . $this->view;
 		}
+
+		$body_class .= ' wsrw-not-licensed';
 
 		return $body_class;
 	}
@@ -572,7 +629,7 @@ abstract class WSRW_Admin_Page {
 				if ( ! isset( $category_counts[ $category ] ) ) {
 					$category_counts[ $category ] = 0;
 				}
-				$category_counts[ $category ] ++;
+				++ $category_counts[ $category ];
 			}
 		}
 
@@ -749,7 +806,6 @@ abstract class WSRW_Admin_Page {
 		$html .= '</div>';
 
 		return $html;
-
 	}
 
 	/**

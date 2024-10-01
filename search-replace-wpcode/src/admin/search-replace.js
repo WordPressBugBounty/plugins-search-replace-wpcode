@@ -19,6 +19,7 @@ const WSRSearchReplace = window.WSRSearchReplace || (
 			init() {
 				app.find_elements();
 				app.init_form();
+				app.init_upsell();
 			},
 			find_elements() {
 				app.form = $( '#wsrw-search-replace-form' );
@@ -136,6 +137,8 @@ const WSRSearchReplace = window.WSRSearchReplace || (
 
 				data['tables[]'] = tables;
 
+				$( document ).trigger( 'wsr_before_start_search_replace', [data] );
+
 				app.$do_button.prop( 'disabled', true );
 				$.ajax(
 					{
@@ -200,8 +203,18 @@ const WSRSearchReplace = window.WSRSearchReplace || (
 						response.data.updated_data,
 						function ( key, value ) {
 							// The value here has the format of an object with the keys: table, column, row, old, new.
-							app.$table.append( $( '<tr><td>' + value.table + '</td><td>' + value.column + '</td><td>' + value.row + '</td><td><pre>' + value.old + '</pre></td><td><pre>' + value.new + '</pre></td></tr>' ) );
-
+							app.$table.append(
+								$(
+									'<tr data-table="' + value.table + '" data-row="' + value.row + '" data-column="' + value.column + '">' +
+									'<td><span class="wsrw-check-row-input"><input type="checkbox" data-table="' + value.table + '" data-row="' + value.row + '" data-column="' + value.column + '" class="wsrw-check-row" /></span></td>' +
+									'<td>' + value.table + '</td>' +
+									'<td>' + value.column + '</td>' +
+									'<td><button class="wsrw-row-info wsrw-button wsrw-button-text" type="button">' + value.row + '</button></td>' +
+									'<td><pre>' + value.old + '</pre></td>' +
+									'<td><pre>' + value.new + '</pre></td>' +
+									'</tr>'
+								)
+							);
 						}
 					);
 				}
@@ -219,11 +232,14 @@ const WSRSearchReplace = window.WSRSearchReplace || (
 				}
 				// Remove the no-close class so the modal can be closed.
 				$( 'body' ).removeClass( 'wsrw-no-close' );
-				if ( ! app.dry_run ) {
+				if ( !app.dry_run ) {
 					app.$undo_button.show();
 				} else {
 					app.$do_button.prop( 'disabled', false );
 				}
+
+				// Trigger event so we can clear data.
+				$( document ).trigger( 'wsr_search_replace_finished' );
 			},
 			display_text( text ) {
 				app.$text_display.text( text );
@@ -241,6 +257,63 @@ const WSRSearchReplace = window.WSRSearchReplace || (
 					}
 				);
 				app.results.height( modal_height - other_height );
+			},
+			init_upsell() {
+				// If the body class is "wsrw-not-licensed" we show upsell message when .wsrw-check-row is clicked.
+				if ( !$( 'body' ).hasClass( 'wsrw-not-licensed' ) ) {
+					return;
+				}
+				app.$table.on(
+					'click',
+					'.wsrw-check-row-input',
+					function ( e ) {
+						e.preventDefault();
+						app.show_upsell( wsrwjs.check_row_title, wsrwjs.check_row_content, wsrwjs.check_row_url );
+					}
+				);
+				app.$table.on(
+					'click',
+					'.wsrw-row-info',
+					function ( e ) {
+						e.preventDefault();
+						e.stopPropagation();
+						app.show_upsell( wsrwjs.row_info_title, wsrwjs.row_info_content, wsrwjs.row_info_url );
+					}
+				);
+			},
+			show_upsell( title, content, button_url, button_text ) {
+				// If button_text is not set let's default it to wsrwjs.upgrade_to_pro.
+				button_text = button_text || wsrwjs.upgrade_to_pro;
+				$.alert( {
+					title: title,
+					content: content,
+					type: 'blue',
+					animateFromElement: false,
+					backgroundDismiss: true,
+					boxWidth: '550px',
+					draggable: false,
+					buttons: {
+						confirm: {
+							text: button_text,
+							btnClass: 'wsrw-button wsrw-button-large wsrw-button-orange',
+							keys: ['enter'],
+							action: function () {
+								// Open in new window wsrwjs.check_row_url.
+								window.open( button_url, '_blank' );
+							},
+						},
+					},
+					onOpenBefore() {
+						if ( wsrwjs.upgrade_bonus ) {
+							this.$btnc.after( '<div class="wsrw-discount-note">' + wsrwjs.upgrade_bonus + '</div>' );
+							this.$body.find( '.jconfirm-content' ).addClass( 'wsrw-lite-upgrade' );
+						}
+						this.$icon.html( wsrwjs.lock_icon );
+					},
+					onContentReady() {
+						this.$icon.html( wsrwjs.lock_icon );
+					}
+				} );
 			}
 		};
 		return app;

@@ -8,6 +8,8 @@ jQuery( function ( $ ) {
 				return;
 			}
 			$body.removeClass( 'wsrw-show-modal' );
+
+			$(document).trigger( 'wsrw-modal-closed' );
 		}
 	);
 } );

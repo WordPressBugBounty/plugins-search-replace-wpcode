@@ -23,27 +23,32 @@ class WSRW_Review {
 	 * @param string $text Footer text.
 	 *
 	 * @return string
-	 *
-	 *
 	 */
 	public function admin_footer( $text ) {
 
 		global $current_screen;
 
 		if ( ! empty( $current_screen->id ) && strpos( $current_screen->id, 'wsrw' ) !== false ) {
-			$view = isset( $_GET['view'] ) ? sanitize_text_field( wp_unslash( $_GET['view'] ) ) : 'search_replace';
-			$url  = wsrw_utm_url( 'https://wpcode.com/sr-feedback', 'admin-footer', $view );
+			$url  = 'https://wordpress.org/support/plugin/search-replace-wpcode/reviews/?filter=5';
 			$text = sprintf(
-				/* translators: %1$s - opening link tag; %2$s - closing link tag. */
-				__( 'Have feedback or feature requests? %1$sShare them with us!%2$s', 'insert-headers-and-footers' ),
-				'<a href="' . esc_url( $url ) . '" target="_blank">',
-				'</a>'
+				wp_kses( /* translators: $1$s - WSRW plugin name, $2$s - WP.org review link, $3$s - WP.org review link. */
+					__( 'Please rate %1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">&#9733;&#9733;&#9733;&#9733;&#9733;</a> on <a href="%3$s" target="_blank" rel="noopener">WordPress.org</a> to help us spread the word. Thank you from the WPCode team!', 'search-replace-wpcode' ),
+					array(
+						'a' => array(
+							'href'   => array(),
+							'target' => array(),
+							'rel'    => array(),
+						),
+					)
+				),
+				'<strong>Search & Replace Everything</strong>',
+				$url,
+				$url
 			);
 		}
 
 		return $text;
 	}
-
 }
 
 new WSRW_Review();

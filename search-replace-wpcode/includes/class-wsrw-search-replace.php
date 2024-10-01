@@ -22,6 +22,13 @@ class WSRW_Search_Replace {
 	public $page_size = 1000;
 
 	/**
+	 * The process data.
+	 *
+	 * @var array
+	 */
+	public $process;
+
+	/**
 	 * WSRW_Search_Replace constructor.
 	 */
 	public function __construct() {
@@ -66,12 +73,29 @@ class WSRW_Search_Replace {
 			'case_insensitive' => $case_insensitive,
 		);
 
+		if ( isset( $_POST['checked_items'] ) ) {
+			$response['checked_items'] = json_decode( sanitize_text_field( wp_unslash( $_POST['checked_items'] ) ), true );
+		}
+
 		update_option( 'wsrw_process', $response, false );
 
 		do_action( 'wsrw_start_search_replace', $response );
 
 		wp_send_json_success( $response );
 
+	}
+
+	/**
+	 * Get the process data.
+	 *
+	 * @return array
+	 */
+	public function get_process() {
+		if ( ! isset( $this->process ) ) {
+			$this->process = get_option( 'wsrw_process', array() );
+		}
+
+		return $this->process;
 	}
 
 	/**
@@ -141,7 +165,7 @@ class WSRW_Search_Replace {
 		}
 
 		// Let's see if we have the process data saved.
-		$process = get_option( 'wsrw_process', array() );
+		$process = $this->get_process();
 
 		// If we don't have any process data, we can't do anything.
 		if ( empty( $process ) ) {
@@ -392,7 +416,7 @@ class WSRW_Search_Replace {
 	 *
 	 * @return int
 	 */
-	private function get_all_pages( $tables ) {
+	protected function get_all_pages( $tables ) {
 		// Let's get the total number of rows in the tables.
 		$total_rows = 0;
 		foreach ( $tables as $table ) {
@@ -532,5 +556,3 @@ class WSRW_Search_Replace {
 		return $string;
 	}
 }
-
-new WSRW_Search_Replace();

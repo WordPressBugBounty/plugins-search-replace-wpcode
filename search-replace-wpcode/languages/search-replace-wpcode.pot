@@ -2,14 +2,14 @@
 # This file is distributed under the GPL2.
 msgid ""
 msgstr ""
-"Project-Id-Version: Search & Replace Everything 1.0.3\n"
+"Project-Id-Version: Search & Replace Everything 1.0.4\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/search-replace-wpcode\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-08-19T12:11:54+00:00\n"
+"POT-Creation-Date: 2024-10-01T12:45:04+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.5.0\n"
 "X-Domain: search-replace-wpcode\n"
@@ -48,17 +48,50 @@ msgid "OK"
 msgstr ""
 
 #: includes/admin/admin-scripts.php:49
-msgid "Error"
+msgid "Close"
 msgstr ""
 
 #: includes/admin/admin-scripts.php:50
+msgid "Error"
+msgstr ""
+
+#: includes/admin/admin-scripts.php:51
 msgid "Please Wait"
+msgstr ""
+
+#: includes/admin/admin-scripts.php:52
+msgid "Upgrade to Pro"
+msgstr ""
+
+#: includes/admin/admin-scripts.php:53
+msgid "Replacing individual items is a Pro feature"
+msgstr ""
+
+#: includes/admin/admin-scripts.php:54
+msgid "Upgrade to Search & Replace Everything Pro today and choose exactly which rows you want to replace from the results without having to do complex queries."
+msgstr ""
+
+#: includes/admin/admin-scripts.php:56
+msgid "Full Row Info is a Pro Feature"
+msgstr ""
+
+#: includes/admin/admin-scripts.php:57
+msgid "Upgrade to Search & Replace Everything Pro today and view the full row information and easily trace back results to the original content without having to leave the admin."
+msgstr ""
+
+#: includes/admin/admin-scripts.php:61
+msgid "<strong>Bonus:</strong> Search & Replace Everything Lite users get <span>$30 off</span> regular price, automatically applied at checkout."
 msgstr ""
 
 #: includes/admin/class-wsrw-admin-page-loader.php:125
 #: includes/admin/pages/class-wsrw-admin-page-search-replace.php:159
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:496
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:497
 msgid "Search & Replace"
+msgstr ""
+
+#. translators: $1$s - WSRW plugin name, $2$s - WP.org review link, $3$s - WP.org review link.
+#: includes/admin/class-wsrw-review.php:35
+msgid "Please rate %1$s <a href=\"%2$s\" target=\"_blank\" rel=\"noopener noreferrer\">&#9733;&#9733;&#9733;&#9733;&#9733;</a> on <a href=\"%3$s\" target=\"_blank\" rel=\"noopener\">WordPress.org</a> to help us spread the word. Thank you from the WPCode team!"
 msgstr ""
 
 #: includes/admin/pages/class-wsrw-admin-page-search-replace.php:59
@@ -128,13 +161,13 @@ msgstr ""
 
 #: includes/admin/pages/class-wsrw-admin-page-search-replace.php:167
 #: includes/admin/pages/class-wsrw-admin-page-search-replace.php:171
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:615
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:616
 msgid "Search for"
 msgstr ""
 
 #: includes/admin/pages/class-wsrw-admin-page-search-replace.php:177
 #: includes/admin/pages/class-wsrw-admin-page-search-replace.php:181
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:616
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:617
 msgid "Replace with"
 msgstr ""
 
@@ -171,182 +204,182 @@ msgstr ""
 msgid "Results"
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:260
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:261
 msgctxt "Database table name."
 msgid "Table"
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:261
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:262
 msgctxt "Which column in the table is affected."
 msgid "Column"
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:262
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:263
 msgctxt "Which row in the table is affected."
 msgid "Row"
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:263
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:264
 msgctxt "The value before the replace."
 msgid "Before"
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:264
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:265
 msgctxt "The value after the replace."
 msgid "After"
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:269
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:270
 msgid "Replace All"
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:270
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:271
 msgid "History & Undo"
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:307
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:308
 msgid "You do not have permission to upload files."
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:319
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:320
 msgid "Link expired, please try again."
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:328
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:329
 msgid "Invalid media ID."
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:334
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:431
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:498
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:335
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:432
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:499
 msgid "Replace Media"
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:338
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:339
 msgctxt "file type"
 msgid "file"
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:341
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:342
 msgctxt "file type"
 msgid "image"
 msgstr ""
 
 #. Translators: %1$s is the file name. %2$s and %3$s are bold/strong tags.
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:347
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:348
 msgid "Choose a new %4$s that will replace %1$s. The new %4$s will completely replace the current %4$s. %2$sThis change cannot be undone.%3$s"
 msgstr ""
 
 #. Translators: %1$s is either file or image depending on the file type.
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:379
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:380
 msgid "Choose a new %1$s to see a preview here"
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:394
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:395
 msgid "No file chosen"
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:398
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:399
 msgid "Choose a file&hellip;"
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:402
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:403
 msgid "Clear"
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:405
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:406
 #: includes/class-wsrw-image-replace.php:300
 #: includes/class-wsrw-image-replace.php:321
 msgid "Replace Source File"
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:432
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:433
 msgid "Choose a recently uploaded file to replace."
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:438
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:439
 msgid "No media found."
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:469
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:470
 msgid "Replace"
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:483
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:484
 msgid "View all media files"
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:497
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:560
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:498
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:561
 msgid "History"
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:499
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:500
 msgid "Settings"
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:510
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:511
 msgid "License Key"
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:525
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:526
 msgid "You're using Search & Replace Everything Lite - no license needed. Enjoy!"
 msgstr ""
 
 #. Translators: %1$s - Opening anchor tag, do not translate. %2$s - Closing anchor tag, do not translate.
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:532
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:533
 msgid "To unlock more features consider %1$supgrading to PRO%2$s."
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:539
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:540
 msgid "Already purchased? Simply enter your license key below to enable Search & Replace Everything PRO!"
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:541
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:542
 msgid "Paste license key here"
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:543
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:544
 msgid "Verify Key"
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:561
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:562
 msgid "On this page you can see a list of previous search & replace operations that you can undo."
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:576
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:577
 msgid "Search & Replace History is a PRO feature"
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:577
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:578
 msgid "Upgrade today and view a history of all search & replace operations performed on your database and undo them with just 1-click directly from the WordPress admin."
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:578
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:579
 msgid "Please note: the operations are only recorded after you upgrade so any replacements made using the lite plugin will not be available for undo."
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:580
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:581
 msgid "Upgrade Now"
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:617
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:618
 msgid "Author"
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:618
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:619
 msgid "Created"
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:619
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:620
 msgid "Actions"
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:636
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:637
 msgid "Undone by %1$s on %2$s"
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:642
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:643
 msgid "Undo"
 msgstr ""
 
@@ -354,12 +387,24 @@ msgstr ""
 msgid "You do not have permission to access this page."
 msgstr ""
 
-#: includes/admin/pages/class-wsrw-admin-page.php:283
+#: includes/admin/pages/class-wsrw-admin-page.php:240
+msgid "Support"
+msgstr ""
+
+#: includes/admin/pages/class-wsrw-admin-page.php:245
+msgid "Docs"
+msgstr ""
+
+#: includes/admin/pages/class-wsrw-admin-page.php:255
+msgid "Made with %1$s by the %2$s team"
+msgstr ""
+
+#: includes/admin/pages/class-wsrw-admin-page.php:339
 msgid "Help"
 msgstr ""
 
 #. translators: %s is the title of the metabox.
-#: includes/admin/pages/class-wsrw-admin-page.php:437
+#: includes/admin/pages/class-wsrw-admin-page.php:494
 msgid "Collapse Metabox %s"
 msgstr ""
 
@@ -413,21 +458,21 @@ msgstr ""
 msgid "Use the button above to begin the source file replacement process."
 msgstr ""
 
-#: includes/class-wsrw-search-replace.php:41
-#: includes/class-wsrw-search-replace.php:140
+#: includes/class-wsrw-search-replace.php:48
+#: includes/class-wsrw-search-replace.php:164
 msgid "You do not have permission to do this."
 msgstr ""
 
-#: includes/class-wsrw-search-replace.php:50
+#: includes/class-wsrw-search-replace.php:57
 msgid "Please enter a search term."
 msgstr ""
 
-#: includes/class-wsrw-search-replace.php:148
+#: includes/class-wsrw-search-replace.php:172
 msgid "No process data found."
 msgstr ""
 
 #. translators: %s is the table name.
-#: includes/class-wsrw-search-replace.php:252
+#: includes/class-wsrw-search-replace.php:276
 msgid "Processed table %s"
 msgstr ""
 
@@ -467,4 +512,38 @@ msgstr ""
 
 #: includes/lite/admin/class-wsrw-connect.php:267
 msgid "Pro version installed but needs to be activated on the Plugins page inside your WordPress admin."
+msgstr ""
+
+#. Translators: %1$s and %2$s add a link to the upgrade page. %3$s and %4$s make the text bold.
+#: includes/lite/admin/notices.php:36
+msgid "%3$sYou're using Search & Replace Everything Lite%4$s. To unlock more features consider %1$supgrading to Pro%2$s."
+msgstr ""
+
+#: includes/lite/admin/notices.php:62
+msgid "Get Search & Replace Everything Pro and Unlock all the Powerful Features"
+msgstr ""
+
+#: includes/lite/admin/notices.php:65
+msgid "Replace any text with confidence knowing you can 1-click undo"
+msgstr ""
+
+#: includes/lite/admin/notices.php:66
+msgid "Save time by replacing images directly from the Gutenberg Editor"
+msgstr ""
+
+#: includes/lite/admin/notices.php:69
+msgid "Replace with precision by being able to choose which results to skip"
+msgstr ""
+
+#: includes/lite/admin/notices.php:70
+msgid "Track back results by viewing the full context of search results"
+msgstr ""
+
+#: includes/lite/admin/notices.php:76
+msgid "Get Search & Replace Everything Pro Today and Unlock all the Powerful Features »"
+msgstr ""
+
+#. Translators: Placeholders make the text bold.
+#: includes/lite/admin/notices.php:81
+msgid "%1$sBonus:%2$s Search & Replace Everything Lite users get %3$s$30 off regular price%4$s, automatically applied at checkout"
 msgstr ""

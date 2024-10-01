@@ -257,6 +257,7 @@ class WSRW_Admin_Page_Search_Replace extends WSRW_Admin_Page {
 			<div id="wsrw-results">
 				<table class="wsrw-search-results widefat" id="wsrw-results-table">
 					<tr>
+						<th><span class="wsrw-check-row-input"><input type="checkbox" id="wsrw-check-all"/></span></th>
 						<th><?php echo esc_html_x( 'Table', 'Database table name.', 'search-replace-wpcode' ); ?></th>
 						<th><?php echo esc_html_x( 'Column', 'Which column in the table is affected.', 'search-replace-wpcode' ); ?></th>
 						<th><?php echo esc_html_x( 'Row', 'Which row in the table is affected.', 'search-replace-wpcode' ); ?></th>

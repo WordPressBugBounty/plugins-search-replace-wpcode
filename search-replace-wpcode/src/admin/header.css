@@ -1,6 +1,7 @@
 .wsrw-search-replace {
 	#wpcontent {
 		padding-left: 0 !important;
+		margin-bottom: 100px;
 	}
 
 	#wpwrap {
@@ -118,4 +119,12 @@
 	.wsrw-icon-logo-text {
 		margin-top: -3px;
 	}
+}
+#wsrw-notice-consider-upgrading {
+	margin: 0;
+	border: 0;
+	box-shadow: none;
+	background-color: #dddddd;
+	color: var(--wpcode-text-color-heading);
+	text-align: center;
 }
