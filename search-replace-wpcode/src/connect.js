@@ -16,6 +16,7 @@ var WSRWConnect = window.WSRWConnect || (
 		// jquery-confirm defaults.
 		jconfirm.defaults = {
 			closeIcon: true,
+			closeIconClass: 'close-icon-svg',
 			backgroundDismiss: false,
 			escapeKey: true,
 			animationBounce: 1,

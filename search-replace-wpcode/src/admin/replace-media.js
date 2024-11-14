@@ -4,6 +4,7 @@ jQuery( document ).ready( function ( $ ) {
 
 	jconfirm.defaults = {
 		closeIcon: true,
+		closeIconClass: 'close-icon-svg',
 		backgroundDismiss: false,
 		escapeKey: true,
 		animationBounce: 1,

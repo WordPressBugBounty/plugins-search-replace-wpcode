@@ -32,6 +32,15 @@ class WSRW_Search_Replace {
 	 * WSRW_Search_Replace constructor.
 	 */
 	public function __construct() {
+		$this->ajax_hooks();
+	}
+
+	/**
+	 * Add the ajax hooks.
+	 *
+	 * @return void
+	 */
+	public function ajax_hooks() {
 		add_action( 'wp_ajax_wsrw_start_search_replace', array( $this, 'ajax_prepare_search_replace' ) );
 		add_action( 'wp_ajax_wsrw_do_search_replace', array( $this, 'ajax_do_search_replace' ) );
 	}
@@ -82,7 +91,6 @@ class WSRW_Search_Replace {
 		do_action( 'wsrw_start_search_replace', $response );
 
 		wp_send_json_success( $response );
-
 	}
 
 	/**
@@ -228,15 +236,14 @@ class WSRW_Search_Replace {
 				if ( $content !== $replaced_content ) {
 					$update_clause[] = $column . ' = "' . $this->mysql_real_escape_string( $replaced_content ) . '"';
 
-					$old = $this->highlight_results( $process['search'], esc_html( $content ), 'red', array(), '', $case_insensitive );
-					$new = $this->highlight_results( $process['replace'], esc_html( $replaced_content ), 'green', $old['positions'], $process['search'] );
+					$highlighted_results = $this->highlight_replacements( $process['search'], $process['replace'], $content, $replaced_content, $case_insensitive );
 
 					$operation_data = array(
 						'table'  => $table_name,
 						'column' => $column,
 						'row'    => $row->$primary_key,
-						'old'    => $old['highlighted'],
-						'new'    => $new['highlighted'],
+						'old'    => $highlighted_results['old'],
+						'new'    => $highlighted_results['new'],
 					);
 
 					$updated_data[] = $operation_data;
@@ -276,7 +283,35 @@ class WSRW_Search_Replace {
 				'message'      => sprintf( esc_html__( 'Processed table %s', 'search-replace-wpcode' ), $table_name ),
 			)
 		);
+	}
 
+	/**
+	 * Highlight the search results.
+	 *
+	 * @param string $search The search term.
+	 * @param string $replace The replace term.
+	 * @param string $content The content to search in.
+	 * @param string $replaced_content The content after the replace.
+	 * @param bool   $case_insensitive Whether the search is case insensitive.
+	 *
+	 * @return array
+	 */
+	public function highlight_replacements( $search, $replace, $content, $replaced_content, $case_insensitive ) {
+
+		$old = $this->highlight_results( $search, esc_html( $content ), 'red', array(), '', $case_insensitive );
+		$new = $this->highlight_results( $replace, esc_html( $replaced_content ), 'green', $old['positions'], $search );
+
+		return array(
+			'old' => $old['highlighted'],
+			'new' => $new['highlighted'],
+		);
+	}
+
+	public function reverse_replace( $original_value, $search_string, $replace_string ) {
+		// Replace the $replace_string with the $search_string in the original_value.
+		$modified_value = str_replace( $original_value, $search_string, $replace_string );
+
+		return $modified_value;
 	}
 
 	/**
@@ -315,10 +350,8 @@ class WSRW_Search_Replace {
 			}
 			// We need this to be serialized as we got it serialized.
 			$replaced_content = serialize( $replaced_content ); // phpcs:ignore
-		} else {
-			if ( is_string( $content ) ) {
-				$replaced_content = $this->str_replace( $search, $replace, $content, $case_insensitive );
-			}
+		} elseif ( is_string( $content ) ) {
+			$replaced_content = $this->str_replace( $search, $replace, $content, $case_insensitive );
 		}
 
 		return $replaced_content;
@@ -353,10 +386,8 @@ class WSRW_Search_Replace {
 			}
 			$subject = $_tmp;
 			unset( $_tmp );
-		} else {
-			if ( is_string( $subject ) ) {
-				$subject = $this->str_replace( $search, $replace, $subject, $case_insensitive );
-			}
+		} elseif ( is_string( $subject ) ) {
+			$subject = $this->str_replace( $search, $replace, $subject, $case_insensitive );
 		}
 
 		return $subject;
@@ -406,7 +437,6 @@ class WSRW_Search_Replace {
 			'primary_key' => $primary_key,
 			'columns'     => $column_names,
 		);
-
 	}
 
 	/**

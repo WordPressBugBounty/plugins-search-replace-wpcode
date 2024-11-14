@@ -2,14 +2,14 @@
 # This file is distributed under the GPL2.
 msgid ""
 msgstr ""
-"Project-Id-Version: Search & Replace Everything 1.0.4\n"
+"Project-Id-Version: Search & Replace Everything 1.0.5\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/search-replace-wpcode\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-10-01T12:45:04+00:00\n"
+"POT-Creation-Date: 2024-11-14T05:16:17+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.5.0\n"
 "X-Domain: search-replace-wpcode\n"
@@ -48,6 +48,7 @@ msgid "OK"
 msgstr ""
 
 #: includes/admin/admin-scripts.php:49
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:673
 msgid "Close"
 msgstr ""
 
@@ -205,26 +206,31 @@ msgid "Results"
 msgstr ""
 
 #: includes/admin/pages/class-wsrw-admin-page-search-replace.php:261
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:663
 msgctxt "Database table name."
 msgid "Table"
 msgstr ""
 
 #: includes/admin/pages/class-wsrw-admin-page-search-replace.php:262
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:664
 msgctxt "Which column in the table is affected."
 msgid "Column"
 msgstr ""
 
 #: includes/admin/pages/class-wsrw-admin-page-search-replace.php:263
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:665
 msgctxt "Which row in the table is affected."
 msgid "Row"
 msgstr ""
 
 #: includes/admin/pages/class-wsrw-admin-page-search-replace.php:264
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:666
 msgctxt "The value before the replace."
 msgid "Before"
 msgstr ""
 
 #: includes/admin/pages/class-wsrw-admin-page-search-replace.php:265
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:667
 msgctxt "The value after the replace."
 msgid "After"
 msgstr ""
@@ -380,7 +386,16 @@ msgid "Undone by %1$s on %2$s"
 msgstr ""
 
 #: includes/admin/pages/class-wsrw-admin-page-search-replace.php:643
+msgid "Preview"
+msgstr ""
+
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:644
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:672
 msgid "Undo"
+msgstr ""
+
+#: includes/admin/pages/class-wsrw-admin-page-search-replace.php:658
+msgid "Preview Undo Search & Replace"
 msgstr ""
 
 #: includes/admin/pages/class-wsrw-admin-page.php:119
@@ -458,21 +473,21 @@ msgstr ""
 msgid "Use the button above to begin the source file replacement process."
 msgstr ""
 
-#: includes/class-wsrw-search-replace.php:48
-#: includes/class-wsrw-search-replace.php:164
+#: includes/class-wsrw-search-replace.php:57
+#: includes/class-wsrw-search-replace.php:172
 msgid "You do not have permission to do this."
 msgstr ""
 
-#: includes/class-wsrw-search-replace.php:57
+#: includes/class-wsrw-search-replace.php:66
 msgid "Please enter a search term."
 msgstr ""
 
-#: includes/class-wsrw-search-replace.php:172
+#: includes/class-wsrw-search-replace.php:180
 msgid "No process data found."
 msgstr ""
 
 #. translators: %s is the table name.
-#: includes/class-wsrw-search-replace.php:276
+#: includes/class-wsrw-search-replace.php:283
 msgid "Processed table %s"
 msgstr ""
 

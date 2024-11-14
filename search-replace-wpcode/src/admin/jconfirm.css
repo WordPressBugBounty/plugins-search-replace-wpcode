@@ -142,21 +142,18 @@ body div.jconfirm .jconfirm-box-container .jconfirm-box.jconfirm-type-green butt
 
 body div.jconfirm .jconfirm-box-container .jconfirm-box .jconfirm-closeIcon {
 	color: transparent;
-	font-family: FontAwesome;
 	height: 14px;
 	opacity: 1;
 	right: 10px;
 	top: 10px;
 	width: 14px;
 }
-
-body div.jconfirm .jconfirm-box-container .jconfirm-box .jconfirm-closeIcon:after {
-	color: #bbbbbb;
-	content: "\f00d";
-	font-size: 16px;
-	left: 0;
-	position: absolute;
-	top: 0;
+body div.jconfirm .jconfirm-box-container .jconfirm-box .jconfirm-closeIcon .close-icon-svg{
+	width: 15px; /* adjust size as needed */
+	height: 14px; /* adjust size as needed */
+	background-image: url('../admin/images/close.svg'); /* place your SVG file path here */
+	background-size: cover;
+	display: inline-block;
 }
 
 body div.jconfirm .jconfirm-box-container .jconfirm-box .jconfirm-closeIcon:hover:after {

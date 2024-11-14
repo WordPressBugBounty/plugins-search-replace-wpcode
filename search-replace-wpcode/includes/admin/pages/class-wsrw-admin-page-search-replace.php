@@ -640,8 +640,10 @@ class WSRW_Admin_Page_Search_Replace extends WSRW_Admin_Page {
 							);
 						else :
 							?>
+							<button class="button button-secondary wsrw-preview-operation" data-operation-id="<?php echo esc_attr( $operation->operation_id ); ?>"><?php esc_html_e( 'Preview', 'search-replace-wpcode' ); ?></button>
 							<button class="button button-secondary wsrw-undo-operation" data-operation-id="<?php echo esc_attr( $operation->operation_id ); ?>"><?php esc_html_e( 'Undo', 'search-replace-wpcode' ); ?></button>
 						<?php endif; ?>
+
 					</td>
 				</tr>
 				<?php
@@ -649,6 +651,28 @@ class WSRW_Admin_Page_Search_Replace extends WSRW_Admin_Page {
 			?>
 			</tbody>
 		</table>
+
+		<div class="wsrw-modal" id="wsrw-search-replace-progress">
+			<div class="wsrw-modal-header">
+				<button type="button" class="wsrw-just-icon-button wsrw-close-modal"><?php wsrw_icon( 'close', 15, 14 ); ?></button>
+				<h2><?php esc_html_e( 'Preview Undo Search & Replace', 'search-replace-wpcode' ); ?></h2>
+			</div>
+			<div id="wsrw-results">
+				<table class="wsrw-search-results widefat" id="wsrw-results-table">
+					<tr>
+						<th><?php echo esc_html_x( 'Table', 'Database table name.', 'search-replace-wpcode' ); ?></th>
+						<th><?php echo esc_html_x( 'Column', 'Which column in the table is affected.', 'search-replace-wpcode' ); ?></th>
+						<th><?php echo esc_html_x( 'Row', 'Which row in the table is affected.', 'search-replace-wpcode' ); ?></th>
+						<th class="wsrw-old-value"><?php echo esc_html_x( 'Before', 'The value before the replace.', 'search-replace-wpcode' ); ?></th>
+						<th class="wsrw-new-value"><?php echo esc_html_x( 'After', 'The value after the replace.', 'search-replace-wpcode' ); ?></th>
+					</tr>
+				</table>
+			</div>
+			<div class="wsrw-modal-buttons">
+				<button id="wsrw-perform-undo" class="wsrw-button wsrw-button-primary"><?php esc_html_e( 'Undo', 'search-replace-wpcode' ); ?></button>
+				<a href="" class="wsrw-button wsrw-button-secondary" id="wsrw-close"><?php esc_html_e( 'Close', 'search-replace-wpcode' ); ?></a>
+			</div>
+		</div>
 		<?php
 		$this->after_table();
 	}

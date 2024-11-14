@@ -12,4 +12,14 @@ jQuery( function ( $ ) {
 			$(document).trigger( 'wsrw-modal-closed' );
 		}
 	);
+	$( '.wsrw-search-replace-history .wsrw-close-modal,.wsrw-search-replace-history .wsrw-modal-overlay' ).on(
+		'click',
+		function () {
+
+			$( '.wsrw-modal' ).hide();
+			$( '.wsrw-modal-overlay' ).hide();
+			$( '.wsrw-undo-operation' ).prop( 'disabled', false );
+			$( '#wsrw-results-table' ).find('tr:not(:first-child)').remove();
+		}
+	);
 } );

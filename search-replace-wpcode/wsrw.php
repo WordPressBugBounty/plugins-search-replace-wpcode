@@ -3,7 +3,7 @@
  * Plugin Name: Search & Replace Everything
  * Plugin URI: https://wpcode.com/
  * Description: Search & Replace text and images across your entire WordPress database with a simple, powerful interface.
- * Version: 1.0.4
+ * Version: 1.0.5
  * Author: WPCode
  * Author URI: https://wpcode.com
  * License: GPL2
