@@ -252,7 +252,20 @@ abstract class WSRW_Admin_Page {
 		?>
 
 		<div class="wsrw-footer">
-			<p><?php printf( esc_html__( 'Made with %1$s by the %2$s team', 'search-replace-wpcode' ), esc_html( $heart ), esc_html( $team ) ); ?></p>
+
+			<p>
+			<?php
+			printf(
+				// Translators: %1$s - love symbol (e.g., heart), %2$s - team name.
+				esc_html__(
+					'Made with %1$s by the %2$s team',
+					'search-replace-wpcode'
+				),
+				esc_html( $heart ),
+				esc_html( $team )
+			);
+			?>
+				</p>
 
 			<ul class="wsrw-footer-links">
 				<?php foreach ( $links as $key => $item ) : ?>
@@ -629,7 +642,7 @@ abstract class WSRW_Admin_Page {
 				if ( ! isset( $category_counts[ $category ] ) ) {
 					$category_counts[ $category ] = 0;
 				}
-				++ $category_counts[ $category ];
+				++$category_counts[ $category ];
 			}
 		}
 

@@ -18,7 +18,10 @@ add_action( 'wsrw_admin_page_content_wsrw-search-replace', 'wsrw_upsell_notice',
 function wsrw_maybe_add_lite_top_bar_notice() {
 
 	// Only add this to the WSRW pages.
-	if ( ! isset( $_GET['page'] ) || 0 !== strpos( $_GET['page'], 'wsrw' ) ) {
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	$page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
+
+	if ( ! $page || 0 !== strpos( $page, 'wsrw' ) ) {
 		return;
 	}
 
@@ -54,8 +57,8 @@ function wsrw_maybe_add_lite_top_bar_notice() {
 function wsrw_upsell_notice( $page_instance ) {
 
 	$view = $page_instance->view;
-
-	if ( 'search_replace' !== $view && !isset( $_GET['media_id'] ) ) {
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	if ( 'search_replace' !== $view && ! isset( $_GET['media_id'] ) ) {
 		return;
 	}
 

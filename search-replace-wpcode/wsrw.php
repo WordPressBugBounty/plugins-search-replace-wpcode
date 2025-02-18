@@ -3,7 +3,7 @@
  * Plugin Name: Search & Replace Everything
  * Plugin URI: https://wpcode.com/
  * Description: Search & Replace text and images across your entire WordPress database with a simple, powerful interface.
- * Version: 1.0.5
+ * Version: 1.0.6
  * Author: WPCode
  * Author URI: https://wpcode.com
  * License: GPL2
@@ -101,8 +101,8 @@ if ( function_exists( 'wsrw_main' ) ) {
 					<p>%1$s</p>
 					<p>%2$s</p>
 				</div>',
-				esc_html__( 'Heads up!', 'insert-headers-and-footers' ),
-				esc_html__( 'Your site already has Search & Replace Everything Pro activated. If you want to switch to Search & Replace Everything Lite, please first go to Plugins → Installed Plugins and deactivate Search & Replace Everything Pro. Then, you can activate Search And Replace Everything Lite.', 'insert-headers-and-footers' )
+				esc_html__( 'Heads up!', 'search-replace-wpcode' ),
+				esc_html__( 'Your site already has Search & Replace Everything Pro activated. If you want to switch to Search & Replace Everything Lite, please first go to Plugins → Installed Plugins and deactivate Search & Replace Everything Pro. Then, you can activate Search And Replace Everything Lite.', 'search-replace-wpcode' )
 			);
 
 			if ( isset( $_GET['activate'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended

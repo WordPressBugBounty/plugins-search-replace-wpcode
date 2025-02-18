@@ -70,6 +70,14 @@ class WSRW_Search_Replace {
 
 		$tables = $this->validate_tables( $tables );
 
+		global $wpdb;
+
+		if ( in_array( $wpdb->options, $tables ) ) {
+			$tables   = array_diff( $tables, array( $wpdb->options ) );
+			$tables   = array_values( $tables );
+			$tables[] = $wpdb->options;
+		}
+
 		$response = array(
 			'search'           => $search,
 			'replace'          => $replace,
@@ -206,6 +214,10 @@ class WSRW_Search_Replace {
 			$where_clause  = array();
 			$update_clause = array();
 
+			if ( 'siteurl' === $row->option_name ) {
+				continue;
+			}
+
 			foreach ( $columns as $column ) {
 				$content = $row->$column;
 
@@ -270,19 +282,71 @@ class WSRW_Search_Replace {
 			$process['table_page'] = 0;
 		}
 
-		update_option( 'wsrw_process', $process );
+		if ( $process['table'] >= count( $process['tables'] ) ) {
+			global $wpdb;
+			if ( in_array( $wpdb->options, $process['tables'], true ) ) {
 
-		wp_send_json_success(
-			array(
-				'updated_data' => $updated_data,
-				'page'         => $process['page'],
-				'table_page'   => $table_page,
-				'table'        => $table,
-				'pages'        => $process['pages'],
-				// translators: %s is the table name.
-				'message'      => sprintf( esc_html__( 'Processed table %s', 'search-replace-wpcode' ), $table_name ),
-			)
-		);
+				// Process 'siteurl' now.
+				$siteurl_value    = get_option( 'siteurl' );
+				$case_insensitive = boolval( $process['case_insensitive'] );
+				$replaced_siteurl = $this->run_replace( $process['search'], $process['replace'], $siteurl_value, $case_insensitive );
+
+				if ( $siteurl_value !== $replaced_siteurl ) {
+					// Update the 'siteurl' option.
+					if ( ! $process['dry_run'] ) {
+						update_option( 'siteurl', $replaced_siteurl );
+					}
+
+					$highlighted_results = $this->highlight_replacements( $process['search'], $process['replace'], $siteurl_value, $replaced_siteurl, $case_insensitive );
+
+					$option    = $wpdb->get_row( $wpdb->prepare( "SELECT option_id FROM {$wpdb->options} WHERE option_name = %s", 'siteurl' ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery
+					$option_id = $option ? $option->option_id : null;
+
+					$operation_data = array(
+						'table'  => $wpdb->options,
+						'column' => 'option_value',
+						'row'    => $option_id, // Use the option_id here.
+						'old'    => $highlighted_results['old'],
+						'new'    => $highlighted_results['new'],
+					);
+
+					$updated_data[] = $operation_data;
+
+					do_action( 'wsrw_performed_search_replace', $process, $siteurl_value, $operation_data );
+				}
+			}
+
+			// Search and replace process is complete; delete the process data.
+			delete_option( 'wsrw_process' );
+
+			// Send the final success response.
+			wp_send_json_success(
+				array(
+					'updated_data' => $updated_data,
+					'page'         => $process['page'],
+					'pages'        => $process['pages'],
+					'message'      => esc_html__( 'Search and replace completed successfully.', 'search-replace-wpcode' ),
+					'complete'     => true,
+				)
+			);
+		} else {
+			// Update the process data.
+			update_option( 'wsrw_process', $process );
+
+			// Send the partial success response.
+			wp_send_json_success(
+				array(
+					'updated_data' => $updated_data,
+					'page'         => $process['page'],
+					'table_page'   => $table_page,
+					'table'        => $table,
+					'pages'        => $process['pages'],
+					// translators: %s is the table name.
+					'message'      => sprintf( esc_html__( 'Processed table %s', 'search-replace-wpcode' ), $table_name ),
+					'complete'     => false,
+				)
+			);
+		}
 	}
 
 	/**
