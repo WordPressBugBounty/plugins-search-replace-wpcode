@@ -12,7 +12,7 @@ jQuery( function ( $ ) {
 			$(document).trigger( 'wsrw-modal-closed' );
 		}
 	);
-	$( '.wsrw-search-replace-history .wsrw-close-modal,.wsrw-search-replace-history .wsrw-modal-overlay' ).on(
+	$( '.wsrw-search-replace-history .wsrw-close-modal,.wsrw-search-replace-history .wsrw-modal-overlay, .wsrw-search-replace-unused_media_backups .wsrw-close-modal,.wsrw-search-replace-unused_media_backups .wsrw-modal-overlay' ).on(
 		'click',
 		function () {
 

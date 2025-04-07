@@ -1,7 +1,9 @@
 .wsrw-search-replace {
 	#wpcontent {
 		padding-left: 0 !important;
-		margin-bottom: 170px;
+		#wpbody-content{
+			margin-bottom: 170px;
+		}
 	}
 
 	#wpwrap {

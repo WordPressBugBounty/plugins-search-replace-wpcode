@@ -21,6 +21,7 @@ jQuery( document ).ready( function ( $ ) {
 			app.placeholder_height();
 			app.init_form();
 			app.placeholder_click();
+			app.drag_and_drop(); // Added this line
 			app.clear_click();
 		},
 		find_elements() {
@@ -29,6 +30,7 @@ jQuery( document ).ready( function ( $ ) {
 			app.preview = $( '#wsrw-media-preview' );
 			app.media_id = $( '#wsrw-media-id' );
 			app.placeholder = $( '#wsrw-media-preview-placeholder' );
+			app.input_placeholder = $('.wsrw-file-field');
 			app.current_image = $( '#wsrw-media-current-image img' );
 			app.replace_buton = $( '#wsrw-start-replace' );
 			app.clear_button = $( '#wsrw-clear-form' );
@@ -135,6 +137,7 @@ jQuery( document ).ready( function ( $ ) {
 						app.file_preview( file.name );
 					}
 				};
+				app.input_placeholder.text(file.name);
 				reader.readAsDataURL( file );
 				app.replace_buton.prop( 'disabled', false );
 				app.clear_button.prop( 'disabled', false );
@@ -183,6 +186,39 @@ jQuery( document ).ready( function ( $ ) {
 				}
 				app.reset_form();
 			}
+		},
+		drag_and_drop() {
+			const dropZone = app.placeholder.add(app.preview);
+
+			dropZone.on('dragover', function(e) {
+				e.preventDefault();
+				e.stopPropagation();
+				$(this).addClass('dragover');
+				e.originalEvent.dataTransfer.dropEffect = 'copy';
+			});
+
+			dropZone.on('dragleave', function(e) {
+				e.preventDefault();
+				e.stopPropagation();
+				$(this).removeClass('dragover');
+			});
+
+			dropZone.on('drop', function(e) {
+				e.preventDefault();
+				e.stopPropagation();
+				$(this).removeClass('dragover');
+
+				const files = e.originalEvent.dataTransfer.files;
+				if ( files.length > 0 ) {
+					const dt = new DataTransfer();
+					dt.items.add( files[0] ); // Only take the first file
+					app.file_input[0].files = dt.files;
+					app.show_preview();
+
+					app.replace_buton.prop( 'disabled', false );
+					app.clear_button.prop( 'disabled', false );
+				}
+			});
 		}
 	};
 

@@ -4,7 +4,7 @@ Tags: search, replace, database, media, search replace
 Requires at least: 5.5
 Tested up to: 6.7
 Requires PHP: 7.0
-Stable tag: 1.0.6
+Stable tag: 1.0.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -90,6 +90,10 @@ Yes, you can replace images from the media library and get a preview of the new 
 Yes, you can find and replace media files of various formats across your entire site.
 
 == Changelog ==
+
+= 1.0.7 =
+* Tweak: You can now drag & drop files in the media replacement page.
+* Tweak: We improved feedback for search & replace operations on large sites.
 
 = 1.0.6 =
 * Tweak: We improved the way we handle a search & replace operation that involves changing the site URL.

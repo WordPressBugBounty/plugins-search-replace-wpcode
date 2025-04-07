@@ -7,16 +7,38 @@
 }
 
 .wsrw-media-placeholder {
-	border: 1px solid var(--wsrw-border-color);
+	border: 2px dashed var(--wsrw-border-color);
 	width: 400px;
 	min-height: 250px;
 	display: flex;
+	box-sizing: border-box;
 	justify-content: center;
 	align-items: center;
 	cursor: pointer;
 
+	&:hover{
+		background-color: #ffffffa1;
+	}
+	&.dragover{
+		border-color:var(--wsrw-color-primary);
+	}
+
 	.wsrw-media-placeholder-text {
 		font-size: var(--wsrw-font-size-s);
+		span{
+			text-align: center;
+			display: block;
+			&:first-child{
+				font-size: 23px;
+				color: var(--wsrw-button-secondary-text);
+				margin-bottom: 11px;
+			}
+			&:nth-child(2){
+				margin-bottom: 5px;
+			}
+
+
+		}
 	}
 }
 

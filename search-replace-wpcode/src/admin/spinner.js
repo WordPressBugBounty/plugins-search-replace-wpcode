@@ -6,6 +6,9 @@ const WSRSpinner = window.WSRSpinner || (
 				app.spinner          = $( '#wsrw-admin-spinner' );
 			},
 			show_button_spinner( $button, position = 'right' ) {
+				if( ! $button.length ) {
+					return;
+				}
 				$button.prop( 'disabled', true );
 				const offset     = $button.offset();
 				const menu_width = $( '#adminmenuwrap' ).width();

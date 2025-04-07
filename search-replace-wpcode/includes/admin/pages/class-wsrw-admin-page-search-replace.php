@@ -284,7 +284,7 @@ class WSRW_Admin_Page_Search_Replace extends WSRW_Admin_Page {
 		<ul class="wsrw-admin-tabs">
 			<?php
 			foreach ( $this->views as $slug => $label ) {
-				if ( 'importer' === $slug ) {
+				if ( 'importer' === $slug || 'unused_media_backups' === $slug ) {
 					continue;
 				}
 				$class = $this->view === $slug ? 'active' : '';
@@ -374,9 +374,11 @@ class WSRW_Admin_Page_Search_Replace extends WSRW_Admin_Page {
 				<div class="wsrw-new-media-preview wsrw-current-media-preview-<?php echo esc_attr( $image_file ); ?>">
 					<div class="wsrw-media-placeholder" id="wsrw-media-preview-placeholder">
 						<span class="wsrw-media-placeholder-text">
+							<span><?php esc_html_e( 'Drag & Drop', 'search-replace-wpcode' ); ?></span>
+							<span><?php esc_html_e( 'or', 'search-replace-wpcode' ); ?></span>
 							<?php
 							printf(
-							// Translators: %1$s is either file or image depending on the file type.
+								// Translators: %1$s is either file or image depending on the file type.
 								esc_html__( 'Choose a new %1$s to see a preview here', 'search-replace-wpcode' ),
 								esc_html( $image_file )
 							);
@@ -577,7 +579,7 @@ class WSRW_Admin_Page_Search_Replace extends WSRW_Admin_Page {
 		?>
 		<div class="wsrw-setting-row wsrw-tools">
 			<h3><?php esc_html_e( 'Remove Unused Media', 'search-replace-wpcode' ); ?></h3>
-			<p><?php esc_html_e( 'Scan your website for unused media files and easily remove them. The scanner will search for references to files across the entire database, allowing you to see if any files are referenced outside of posts or pages.', 'search-replace-wpcode' ); ?></p>
+			<p><?php esc_html_e( 'Scan your website for unused media files and easily remove them. The scanner will search for references to files across the entire database. Please note that if files are used in template files or referenced externally they might still appear unused.', 'search-replace-wpcode' ); ?></p>
 		</div>
 		<hr/>
 		<?php
@@ -745,35 +747,34 @@ class WSRW_Admin_Page_Search_Replace extends WSRW_Admin_Page {
 	 * @return void
 	 */
 	public function unused_media_table() {
-		$media_items = $this->get_dummy_unused_media_items();
+		$media_items = $this->get_unused_media_items();
 		$this->before_table();
+		$show_occurences = apply_filters( 'wsrw_unused_media_show_used_outside_posts', false );
 		?>
-		<header class="wsrw-unused-media-header">
-			<div class="wsrw-control-container">
-				<button id="wsrw-start-media-scan" class="wsrw-button "><?php esc_html_e( 'Begin Scan', 'search-replace-wpcode' ); ?></button>
-				<div class="wsrw-total-media-results"></div>
-			</div>
-			<div class="wsrw-pagination-controls">
-				<button class="wsrw-pagination-first wsrw-button">«</button>
-				<button class="wsrw-pagination-prev wsrw-button">‹</button>
-				<span><?php esc_html_e( 'Page', 'search-replace-wpcode' ); ?></span>
-				<input type="number" class="wsrw-pagination-input wsrw-input" min="1" value="1" style="width: 51px; text-align: center;"/>
-				<span><?php esc_html_e( 'of', 'search-replace-wpcode' ); ?> <span class="wsrw-pagination-total-pages"></span></span>
-				<button class="wsrw-pagination-next wsrw-button">›</button>
-				<button class="wsrw-pagination-last wsrw-button">»</button>
-			</div>
-		</header>
+		<div>
+			<button id="wsrw-start-media-scan" class="wsrw-button "><?php esc_html_e( 'Begin Scan', 'search-replace-wpcode' ); ?></button>
+			<button id="wsrw-stop-media-scan" class="wsrw-button "><?php esc_html_e( 'Stop Scan', 'search-replace-wpcode' ); ?></button>
+			<a href="<?php echo esc_url( $this->get_view_link( 'unused_media_backups' ) ); ?>" class="wsrw-button wsrw-button-secondary"><?php esc_html_e( 'Backups', 'search-replace-wpcode' ); ?></a>
+		</div>
 		<div class="wsrw-progress-bar-container">
 			<div class="wsrs-progress-steps">
 				<p>
-					<span class="wsrw-step-name"><?php esc_html_e( 'Scanning Files', 'search-replace-wpcode' ); ?></span>
+					<?php esc_html_e( 'Scanning site for unused media. You can leave this page and return later.', 'search-replace-wpcode' ); ?>
+				</p>
+				<p>
 					<?php
 					printf(
-					// Translators: %1$s is the current step, %2$s is the total number of steps and  %3$s is the percentage.
-						esc_html__( '(Step %1$s of %2$s) %3$s', 'search-replace-wpcode' ),
-						'<span class="wsrw-step-number">1</span>',
-						'3',
+					// Translators: %s is the percentage of the scan.
+						esc_html__( 'Completed so far: %s', 'search-replace-wpcode' ),
 						'<span class="wsrw-percentage"></span>'
+					);
+					?>
+				</p>
+				<p>
+					<?php
+					printf(
+						esc_html__( 'Estimated time remaining: %s', 'search-replace-wpcode' ),
+						'<span class="wsrw-remaining-time"></span>'
 					);
 					?>
 				</p>
@@ -782,7 +783,22 @@ class WSRW_Admin_Page_Search_Replace extends WSRW_Admin_Page {
 				<div class="wsrw-progress-bar-inner"></div>
 			</div>
 		</div>
+		<p class="wsrw-no-results"></p>
 		<main class="wsrw-unused-media-main">
+			<header class="wsrw-unused-media-header">
+				<div class="wsrw-control-container">
+					<div class="wsrw-total-media-results"><?php $this->get_media_scan_results(); ?></div>
+				</div>
+				<div class="wsrw-pagination-controls">
+					<button class="wsrw-pagination-first wsrw-button">«</button>
+					<button class="wsrw-pagination-prev wsrw-button">‹</button>
+					<span><?php esc_html_e( 'Page', 'search-replace-wpcode' ); ?></span>
+					<input type="number" class="wsrw-pagination-input wsrw-input" min="1" value="1" style="width: 51px; text-align: center;"/>
+					<span><?php esc_html_e( 'of', 'search-replace-wpcode' ); ?> <span class="wsrw-pagination-total-pages"></span></span>
+					<button class="wsrw-pagination-next wsrw-button">›</button>
+					<button class="wsrw-pagination-last wsrw-button">»</button>
+				</div>
+			</header>
 			<div class="wsrw-selected-size-of-media"></div>
 			<div id="wsrw-results" class="wsrw-unused-media-results">
 				<table class="wsrw-search-results widefat" id="wsrw-results-table">
@@ -796,20 +812,28 @@ class WSRW_Admin_Page_Search_Replace extends WSRW_Admin_Page {
 						<th><?php echo esc_html_x( 'Thumbnail', 'Media Thumbnail.', 'search-replace-wpcode' ); ?></th>
 						<th><?php echo esc_html_x( 'Title', 'Media Title.', 'search-replace-wpcode' ); ?></th>
 						<th><?php echo esc_html_x( 'Path', 'Absolute path of the media file.', 'search-replace-wpcode' ); ?></th>
-						<th><?php echo esc_html_x( 'Database Occurrences', 'Where the media file is mentioned.', 'search-replace-wpcode' ); ?></th>
+						<?php if ( $show_occurences ) { ?>
+							<th><?php echo esc_html_x( 'Database Occurrences', 'Where the media file is mentioned.', 'search-replace-wpcode' ); ?></th>
+						<?php } ?>
 						<th><?php echo esc_html_x( 'Size', 'File size.', 'search-replace-wpcode' ); ?></th>
 					</tr>
 					</thead>
 					<tbody id="wsrw-unused-media-list">
 					<?php
 					foreach ( $media_items as $item ) {
+						$title = esc_html( $item['title'] );
+						if ( ! empty( $item['admin_url'] ) ) {
+							$title = '<a href="' . esc_url( $item['admin_url'] ) . '">' . $title . '</a>';
+						}
 						echo '<tr>';
 						echo '<td><span class="wsrw-check-row-input"><input type="checkbox"/></span></td>';
-						echo '<td><img src="' . esc_html( $item->thumbnail ) . '"></td>';
-						echo '<td>' . esc_html( $item->title ) . '</td>';
-						echo '<td>' . esc_html( $item->path ) . '</td>';
-						echo '<td>' . esc_html( $item->occurrences ) . '</td>';
-						echo '<td>' . esc_html( $item->size ) . '</td>';
+						echo '<td><img src="' . esc_html( $item['thumbnail'] ) . '"></td>';
+						echo '<td>' . esc_html( $title ) . '</td>';
+						echo '<td>' . esc_html( $item['path'] ) . '</td>';
+						if ( $show_occurences ) {
+							echo '<td>' . esc_html( $item['occurrences'] ) . '</td>';
+						}
+						echo '<td>' . esc_html( $item['size'] ) . '</td>';
 						echo '</tr>';
 					}
 					?>
@@ -1071,73 +1095,73 @@ class WSRW_Admin_Page_Search_Replace extends WSRW_Admin_Page {
 	 *
 	 * @return array
 	 */
-	private function get_dummy_unused_media_items() {
+	protected function get_unused_media_items() {
 
 		return array(
-			(object) array(
+			array(
 				'thumbnail'   => WSRW_PLUGIN_URL . 'admin/images/dummy10.jpg',
 				'title'       => 'Orange Avatar',
 				'path'        => 'wp-content/uploads/2024/02/unused2.jpg',
 				'occurrences' => '',
 				'size'        => '500 KB',
 			),
-			(object) array(
+			array(
 				'thumbnail'   => WSRW_PLUGIN_URL . 'admin/images/dummy9.jpg',
 				'title'       => 'Green Avatar',
 				'path'        => 'wp-content/uploads/2024/02/unused2.jpg',
 				'occurrences' => '',
 				'size'        => '1.2 MB',
 			),
-			(object) array(
+			array(
 				'thumbnail'   => WSRW_PLUGIN_URL . 'admin/images/dummy8.jpg',
 				'title'       => 'Yellow Avatar',
 				'path'        => 'wp-content/uploads/2024/02/unused2.jpg',
 				'occurrences' => '',
 				'size'        => '750 KB',
 			),
-			(object) array(
+			array(
 				'thumbnail'   => WSRW_PLUGIN_URL . 'admin/images/dummy7.jpg',
 				'title'       => 'Gray Avatar',
 				'path'        => 'wp-content/uploads/2024/02/unused2.jpg',
 				'occurrences' => '',
 				'size'        => '750 KB',
 			),
-			(object) array(
+			array(
 				'thumbnail'   => WSRW_PLUGIN_URL . 'admin/images/dummy6.jpg',
 				'title'       => 'Orange Avatar',
 				'path'        => 'wp-content/uploads/2024/02/unused2.jpg',
 				'occurrences' => '',
 				'size'        => '500 KB',
 			),
-			(object) array(
+			array(
 				'thumbnail'   => WSRW_PLUGIN_URL . 'admin/images/dummy5.jpg',
 				'title'       => 'Black Avatar',
 				'path'        => 'wp-content/uploads/2024/02/unused2.jpg',
 				'occurrences' => '',
 				'size'        => '1.2 MB',
 			),
-			(object) array(
+			array(
 				'thumbnail'   => WSRW_PLUGIN_URL . 'admin/images/dummy4.jpg',
 				'title'       => 'Gold Avatar',
 				'path'        => 'wp-content/uploads/2024/02/unused2.jpg',
 				'occurrences' => '',
 				'size'        => '750 KB',
 			),
-			(object) array(
+			array(
 				'thumbnail'   => WSRW_PLUGIN_URL . 'admin/images/dummy3.jpg',
 				'title'       => 'Brown Avatar',
 				'path'        => 'wp-content/uploads/2024/02/unused2.jpg',
 				'occurrences' => '2 Occurrences',
 				'size'        => '750 KB',
 			),
-			(object) array(
+			array(
 				'thumbnail'   => WSRW_PLUGIN_URL . 'admin/images/dummy1.jpg',
 				'title'       => 'Blue Avatar',
 				'path'        => 'wp-content/uploads/2024/02/unused2.jpg',
 				'occurrences' => '2 Occurrences',
 				'size'        => '750 KB',
 			),
-			(object) array(
+			array(
 				'thumbnail'   => WSRW_PLUGIN_URL . 'admin/images/dummy2.jpg',
 				'title'       => 'Pink Avatar',
 				'path'        => 'wp-content/uploads/2024/02/unused2.jpg',
@@ -1145,5 +1169,13 @@ class WSRW_Admin_Page_Search_Replace extends WSRW_Admin_Page {
 				'size'        => '750 KB',
 			),
 		);
+	}
+
+	/**
+	 * Get the media scan results.
+	 *
+	 * @return void;
+	 */
+	public function get_media_scan_results() {
 	}
 }

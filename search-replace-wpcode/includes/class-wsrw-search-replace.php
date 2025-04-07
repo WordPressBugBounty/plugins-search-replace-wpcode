@@ -341,8 +341,8 @@ class WSRW_Search_Replace {
 					'table_page'   => $table_page,
 					'table'        => $table,
 					'pages'        => $process['pages'],
-					// translators: %s is the table name.
-					'message'      => sprintf( esc_html__( 'Processed table %s', 'search-replace-wpcode' ), $table_name ),
+					// translators: %1$s is the table name %2$s is current database pagination number %3$s is total database pagination pages number.
+					'message'      => sprintf( esc_html__( 'Processing table %1$s %2$s/%3$s', 'search-replace-wpcode' ), $table_name, $process['page'], $process['pages'] ),
 					'complete'     => false,
 				)
 			);
