@@ -65,12 +65,14 @@ function wsrw_upsell_notice( $page_instance ) {
 	$html  = '<h3>' . esc_html__( 'Get Search & Replace Everything Pro and Unlock all the Powerful Features', 'search-replace-wpcode' ) . '</h3>';
 	$html .= '<div class="wsrw-features-list">';
 	$html .= '<ul>';
-	$html .= '<li>' . esc_html__( 'Replace any text with confidence knowing you can 1-click undo', 'search-replace-wpcode' ) . '</li>';
-	$html .= '<li>' . esc_html__( 'Save time by replacing images directly from the Gutenberg Editor', 'search-replace-wpcode' ) . '</li>';
+	$html .= '<li>' . esc_html__( 'Replace any text with confidence knowing you can 1-click undo.', 'search-replace-wpcode' ) . '</li>';
+	$html .= '<li>' . esc_html__( 'Save time by replacing images directly from the Gutenberg Editor.', 'search-replace-wpcode' ) . '</li>';
+	$html .= '<li>' . esc_html__( 'Scan your website for unused media files and safely delete them.', 'search-replace-wpcode' ) . '</li>';
 	$html .= '</ul>';
 	$html .= '<ul>';
-	$html .= '<li>' . esc_html__( 'Replace with precision by being able to choose which results to skip', 'search-replace-wpcode' ) . '</li>';
-	$html .= '<li>' . esc_html__( 'Track back results by viewing the full context of search results', 'search-replace-wpcode' ) . '</li>';
+	$html .= '<li>' . esc_html__( 'Replace with precision by being able to choose which results to skip.', 'search-replace-wpcode' ) . '</li>';
+	$html .= '<li>' . esc_html__( 'Track back results by viewing the full context of search results.', 'search-replace-wpcode' ) . '</li>';
+	$html .= '<li>' . esc_html__( 'Replace images with different extensions across your whole website.', 'search-replace-wpcode' ) . '</li>';
 	$html .= '</ul>';
 	$html .= '</div>';
 	$html .= sprintf(

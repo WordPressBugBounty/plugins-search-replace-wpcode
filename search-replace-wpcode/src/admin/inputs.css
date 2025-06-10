@@ -7,6 +7,22 @@
 	}
 }
 
+/* Direction left - toggle on left, label on right */
+.wsrw-metabox-form-row-direction-left {
+	flex-wrap: wrap;
+	.wsrw-metabox-form-row-label {
+		padding-left: 15px;
+	}
+
+	.wsrw-metabox-form-row-input {
+		flex-shrink: 0;
+		width: auto;
+	}
+	p{
+		flex: 0 0 100%;
+	}
+}
+
 .wsrw-metabox-form-row-label {
 	flex-shrink: 0;
 	width: 245px;

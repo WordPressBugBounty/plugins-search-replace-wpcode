@@ -2,9 +2,9 @@
 Contributors: WPbeginner, smub, gripgrip, wpcodeteam
 Tags: search, replace, database, media, search replace
 Requires at least: 5.5
-Tested up to: 6.7
+Tested up to: 6.8
 Requires PHP: 7.0
-Stable tag: 1.0.7
+Stable tag: 1.0.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -90,6 +90,9 @@ Yes, you can replace images from the media library and get a preview of the new 
 Yes, you can find and replace media files of various formats across your entire site.
 
 == Changelog ==
+
+= 1.0.8 =
+* Fix: We fixed an issue where a search & replace operation would generate notices in the logs.
 
 = 1.0.7 =
 * Tweak: You can now drag & drop files in the media replacement page.

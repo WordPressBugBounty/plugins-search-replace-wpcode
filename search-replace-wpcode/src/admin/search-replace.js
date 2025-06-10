@@ -18,6 +18,7 @@ const WSRSearchReplace = window.WSRSearchReplace || (
 			pages: 0,
 			dry_run: true,
 			init() {
+				window.WSRSearchReplace = app;
 				app.find_elements();
 				app.init_form();
 				app.init_upsell();

@@ -14,6 +14,17 @@
 		color: var(--wsrw-text-color-paragraph);
 		font-size: var(--wsrw-font-size-s);
 	}
+	.wsrw-pro-pill {
+		background: #bbb;
+		color: var(--wsrw-background-white);
+		text-transform: uppercase;
+		padding: 4px 7px;
+		border-radius: 9px;
+		font-size: 8px;
+		line-height: 1;
+		display: inline-block;
+		vertical-align: text-top;
+	}
 
 	.wsrw-add-snippet & {
 		padding-top: 20px;

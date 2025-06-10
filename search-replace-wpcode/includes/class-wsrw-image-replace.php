@@ -20,7 +20,7 @@ class WSRW_Image_Replace {
 	 *
 	 * @var string
 	 */
-	private $old_file_path;
+	protected $old_file_path;
 
 	/**
 	 * WSRW_Image_Replace constructor.
@@ -110,24 +110,46 @@ class WSRW_Image_Replace {
 		$file     = $files['file'];
 		$media_id = isset( $_POST['media_id'] ) ? absint( $_POST['media_id'] ) : 0;
 
-		// Let's check if the user is allowed to upload the file format.
+		// Let's grab the path of the current image using the media_id.
+		$attachment    = get_post( $media_id );
+		$old_file_path = get_attached_file( $media_id, true );
+
+		// Validate file type.
+		$original_mime_type = get_post_mime_type( $media_id );
+		$file_mime_type     = $file['type'];
+
+		// Get allowed mime types.
 		$allowed_mime_types = get_allowed_mime_types();
-		$allowed_mime_types = apply_filters( 'upload_mimes', $allowed_mime_types );
-		$ext                = pathinfo( $file['name'], PATHINFO_EXTENSION );
-		$mime_type          = wp_check_filetype( $file['name'], $allowed_mime_types );
-		if ( ! in_array( $mime_type['type'], $allowed_mime_types, true ) ) {
+
+		// Check if the uploaded file type is allowed.
+		$is_allowed = false;
+		foreach ( $allowed_mime_types as $ext => $mime ) {
+			if ( $mime === $file_mime_type ) {
+				$is_allowed = true;
+				break;
+			}
+		}
+
+		if ( ! $is_allowed ) {
 			return new WP_REST_Response(
 				array(
 					'success' => false,
-					'message' => esc_html__( 'File type not allowed', 'search-replace-wpcode' ),
+					'message' => esc_html__( 'File type not allowed. Please upload a file with a supported format.', 'search-replace-wpcode' ),
 				),
 				400
 			);
 		}
 
-		// Let's grab the path of the current image using the media_id.
-		$attachment    = get_post( $media_id );
-		$old_file_path = get_attached_file( $media_id, true );
+		// For images, check if we're replacing an image with a non-image.
+		if ( strpos( $original_mime_type, 'image/' ) === 0 && strpos( $file_mime_type, 'image/' ) !== 0 ) {
+			return new WP_REST_Response(
+				array(
+					'success' => false,
+					'message' => esc_html__( 'You cannot replace an image with a non-image file. Please upload an image file.', 'search-replace-wpcode' ),
+				),
+				200
+			);
+		}
 
 		// Let's first delete all the thumbnails for the old image.
 		$metadata     = wp_get_attachment_metadata( $media_id );
@@ -135,7 +157,6 @@ class WSRW_Image_Replace {
 		wp_delete_attachment_files( $media_id, $metadata, $backup_sizes, $old_file_path );
 
 		// Let's upload the new file in the same directory as the old file with the same exact name.
-		$new_file_path = $old_file_path;
 		if ( ! function_exists( 'wp_handle_upload' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 		}
@@ -160,9 +181,11 @@ class WSRW_Image_Replace {
 					'success' => false,
 					'message' => $move_file['error'] ?? esc_html__( 'An error occurred while uploading the file', 'search-replace-wpcode' ),
 				),
-				500
+				200
 			);
 		}
+
+		$new_file_path = $move_file['file'];
 
 		// Let's make sure the media file is included before calling generate attachment metada.
 		require_once ABSPATH . 'wp-admin/includes/image.php';
@@ -211,6 +234,32 @@ class WSRW_Image_Replace {
 				},
 			)
 		);
+	}
+
+	/**
+	 * Get the new filename for the uploaded file.
+	 *
+	 * @param string $old_file_path The path to the old file.
+	 * @param string $new_filename The new filename.
+	 *
+	 * @return string
+	 */
+	protected function get_new_filename( $old_file_path, $new_filename ) {
+		// By default, use the original filename.
+		return basename( $old_file_path );
+	}
+
+	/**
+	 * Get the file extension to use.
+	 *
+	 * @param string $old_file_path The path to the old file.
+	 * @param string $new_file_path The path to the new file.
+	 *
+	 * @return string
+	 */
+	protected function get_file_extension( $old_file_path, $new_file_path ) {
+		// Always use the original extension in base class.
+		return pathinfo( $old_file_path, PATHINFO_EXTENSION );
 	}
 
 	/**
@@ -269,7 +318,6 @@ class WSRW_Image_Replace {
 		$actions['wsrw-replace'] = '<a href="' . esc_url( self::get_replace_page_url( $post ) ) . '" title="' . esc_attr__( 'Replace the source file.', 'search-replace-wpcode' ) . '">' . esc_html_x( 'Replace Source File', 'action in the list of attachments', 'search-replace-wpcode' ) . '</a>';
 
 		return $actions;
-
 	}
 
 	/**
@@ -337,12 +385,14 @@ class WSRW_Image_Replace {
 	 */
 	public function unique_filename_callback( $dir, $filename, $ext = '' ) {
 		if ( isset( $this->old_file_path ) ) {
-			return basename( $this->old_file_path );
+			$new_filename         = $this->get_new_filename( $this->old_file_path, $filename );
+			$filename_without_ext = pathinfo( $new_filename, PATHINFO_FILENAME );
+			$new_ext              = $this->get_file_extension( $this->old_file_path, $filename . $ext );
+
+			return $filename_without_ext . '.' . $new_ext;
 		} else {
 			return $filename;
 		}
 	}
 
 }
-
-new WSRW_Image_Replace();

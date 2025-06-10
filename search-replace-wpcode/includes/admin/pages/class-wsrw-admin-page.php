@@ -563,32 +563,54 @@ abstract class WSRW_Admin_Page {
 	 * @param string $show_if_value Value(s) to match against, can be comma-separated string for multiple values.
 	 * @param string $description Description to show under the input.
 	 * @param bool   $is_pro Whether this is a pro feature and the pro indicator should be shown next to the label.
+	 * @param string $toggle_position The direction of the row layout. 'right' (default) for label on left and input on right, 'left' for input on left and label on right.
 	 *
 	 * @return void
 	 */
-	public function metabox_row( $label, $input, $id = '', $show_if_id = '', $show_if_value = '', $description = '', $is_pro = false ) {
+	public function metabox_row( $label, $input, $id = '', $show_if_id = '', $show_if_value = '', $description = '', $is_pro = false, $toggle_position = 'right' ) {
 		$show_if_rules = '';
 		if ( ! empty( $show_if_id ) ) {
 			$show_if_rules = sprintf( 'data-show-if-id="%1$s" data-show-if-value="%2$s"', esc_attr( $show_if_id ), esc_attr( $show_if_value ) );
 		}
+
+		$toggle_position_class = 'left' === $toggle_position ? 'wsrw-metabox-form-row-direction-left' : '';
 		?>
-		<div class="wsrw-metabox-form-row" <?php echo $show_if_rules; // phpcs:ignore ?>>
-			<div class="wsrw-metabox-form-row-label">
-				<label for="<?php echo esc_attr( $id ); ?>">
-					<?php echo esc_html( $label ); ?>
-					<?php
-					if ( $is_pro ) {
-						echo '<span class="wsrw-pro-pill">PRO</span>';
-					}
-					?>
-				</label>
-			</div>
-			<div class="wsrw-metabox-form-row-input">
-				<?php echo $input; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		<div class="wsrw-metabox-form-row <?php echo esc_attr( $toggle_position_class ); ?>" <?php echo $show_if_rules; // phpcs:ignore ?>>
+			<?php if ( 'left' === $toggle_position ) : ?>
+				<div class="wsrw-metabox-form-row-input">
+					<?php echo $input; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				</div>
+				<div class="wsrw-metabox-form-row-label">
+					<label for="<?php echo esc_attr( $id ); ?>">
+						<?php echo esc_html( $label ); ?>
+						<?php
+						if ( $is_pro ) {
+							echo '<span class="wsrw-pro-pill">PRO</span>';
+						}
+						?>
+					</label>
+				</div>
 				<?php if ( ! empty( $description ) ) { ?>
 					<p><?php echo wp_kses_post( $description ); ?></p>
 				<?php } ?>
-			</div>
+			<?php else : ?>
+				<div class="wsrw-metabox-form-row-label">
+					<label for="<?php echo esc_attr( $id ); ?>">
+						<?php echo esc_html( $label ); ?>
+						<?php
+						if ( $is_pro ) {
+							echo '<span class="wsrw-pro-pill">PRO</span>';
+						}
+						?>
+					</label>
+				</div>
+				<div class="wsrw-metabox-form-row-input">
+					<?php echo $input; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					<?php if ( ! empty( $description ) ) { ?>
+						<p><?php echo wp_kses_post( $description ); ?></p>
+					<?php } ?>
+				</div>
+			<?php endif; ?>
 		</div>
 		<?php
 	}

@@ -85,6 +85,7 @@ class WSRW_Admin_Page_Search_Replace extends WSRW_Admin_Page {
 		$data['are_you_sure']              = esc_html__( 'Are you sure?', 'search-replace-wpcode' );
 		$data['replace_media_confirm']     = esc_html__( 'This will replace the media file completely with the new file. This change is permanent, please make sure you have a copy of the replaced file if you need it.', 'search-replace-wpcode' );
 		$data['image_replace_complete']    = esc_html__( 'Media Replace Completed', 'search-replace-wpcode' );
+		$data['different_ext_notice']      = esc_html__( 'The new file you’ve selected has a different extension from the original. For your convenience, the “Replace File Extension” option has been enabled. If you wish to keep the current extension, you may disable this option before proceeding.', 'search-replace-wpcode' );
 		$data['no_table_selected_title']   = esc_html__( 'No Tables Selected', 'search-replace-wpcode' );
 		$data['no_table_selected_message'] = esc_html__( 'Please select at least 1 table to start the search and replace process.', 'search-replace-wpcode' );
 		$data['no_results_found']          = esc_html__( 'No results found.', 'search-replace-wpcode' );
@@ -405,6 +406,9 @@ class WSRW_Admin_Page_Search_Replace extends WSRW_Admin_Page {
 					<button type="reset" class="wsrw-button wsrw-button-secondary" id="wsrw-clear-form" disabled><?php esc_html_e( 'Clear', 'search-replace-wpcode' ); ?></button>
 				</div>
 				<div class="wsrw-media-replace-buttons">
+					<?php
+					$this->output_replace_extension_toggle();
+					?>
 					<button type="submit" class="wsrw-button wsrw-button-primary" id="wsrw-start-replace" disabled><?php esc_html_e( 'Replace Source File', 'search-replace-wpcode' ); ?></button>
 				</div>
 			</form>
@@ -1177,5 +1181,24 @@ class WSRW_Admin_Page_Search_Replace extends WSRW_Admin_Page {
 	 * @return void;
 	 */
 	public function get_media_scan_results() {
+	}
+
+	/**
+	 * Output the replace extension toggle button.
+	 * This method can be overridden in the pro version to show the toggle.
+	 *
+	 * @return void
+	 */
+	protected function output_replace_extension_toggle() {
+		$this->metabox_row(
+			esc_html__( 'Replace File Extension', 'search-replace-wpcode' ),
+			$this->get_checkbox_toggle( false, 'wsrw-keep-extension-lite', '', '1' ),
+			'wsrw-keep-extension-lite',
+			'',
+			'',
+			'',
+			true,
+			'left'
+		);
 	}
 }

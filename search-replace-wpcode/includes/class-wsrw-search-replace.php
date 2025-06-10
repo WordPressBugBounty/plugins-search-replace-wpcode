@@ -214,7 +214,7 @@ class WSRW_Search_Replace {
 			$where_clause  = array();
 			$update_clause = array();
 
-			if ( 'siteurl' === $row->option_name ) {
+			if ( isset( $row->option_name ) && 'siteurl' === $row->option_name ) {
 				continue;
 			}
 
