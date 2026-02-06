@@ -43,6 +43,7 @@ class WSRW_Search_Replace {
 	public function ajax_hooks() {
 		add_action( 'wp_ajax_wsrw_start_search_replace', array( $this, 'ajax_prepare_search_replace' ) );
 		add_action( 'wp_ajax_wsrw_do_search_replace', array( $this, 'ajax_do_search_replace' ) );
+		add_action( 'wp_ajax_wsrw_delete_search_history', array( $this, 'ajax_delete_search_history' ) );
 	}
 
 	/**
@@ -97,6 +98,17 @@ class WSRW_Search_Replace {
 		update_option( 'wsrw_process', $response, false );
 
 		do_action( 'wsrw_start_search_replace', $response );
+
+		// Auto-save search to history.
+		$settings    = new WSRW_Settings();
+		$search_data = array(
+			'search'           => $search,
+			'replace'          => $replace,
+			'tables'           => $tables,
+			'case_insensitive' => $case_insensitive,
+			'dry_run'          => $dry_run,
+		);
+		$settings->save_search_to_history( $search_data );
 
 		wp_send_json_success( $response );
 	}
@@ -648,5 +660,45 @@ class WSRW_Search_Replace {
 		}
 
 		return $string;
+	}
+
+	/**
+	 * AJAX handler to delete a search from history.
+	 *
+	 * @return void
+	 */
+	public function ajax_delete_search_history() {
+		check_admin_referer( 'wsrw_admin', 'nonce' );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error(
+				array(
+					'message' => __( 'You do not have permission to do this.', 'search-replace-wpcode' ),
+				)
+			);
+		}
+
+		$search_id = isset( $_POST['search_id'] ) ? absint( $_POST['search_id'] ) : 0;
+
+		if ( empty( $search_id ) ) {
+			wp_send_json_error(
+				array(
+					'message' => __( 'Invalid search ID.', 'search-replace-wpcode' ),
+				)
+			);
+		}
+
+		$settings = new WSRW_Settings();
+		$result   = $settings->delete_search_from_history( $search_id );
+
+		if ( $result ) {
+			wp_send_json_success(
+				array(
+					'message' => __( 'Search deleted successfully.', 'search-replace-wpcode' ),
+				)
+			);
+		} else {
+			wp_send_json_error( __( 'Failed to delete search.', 'search-replace-wpcode' ) );
+		}
 	}
 }

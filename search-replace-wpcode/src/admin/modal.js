@@ -7,7 +7,7 @@ jQuery( function ( $ ) {
 			if ( $body.hasClass( 'wsrw-no-close' ) ) {
 				return;
 			}
-			$body.removeClass( 'wsrw-show-modal' );
+			$body.removeClass( 'wsrw-show-modal wsrw-show-progress-modal wsrw-show-history-modal' );
 
 			$(document).trigger( 'wsrw-modal-closed' );
 		}

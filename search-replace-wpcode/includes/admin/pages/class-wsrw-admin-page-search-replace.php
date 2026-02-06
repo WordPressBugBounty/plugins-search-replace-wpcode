@@ -60,6 +60,29 @@ class WSRW_Admin_Page_Search_Replace extends WSRW_Admin_Page {
 		parent::__construct();
 	}
 
+	/**
+	 * Wrap settings view in a form tag.
+	 *
+	 * @return void
+	 */
+	public function output() {
+		if ( 'settings' === $this->view ) {
+			$this->output_header();
+			?>
+			<form action="<?php echo esc_url( $this->get_page_action_url() ); ?>" method="post">
+				<div class="wsrw-content">
+					<?php
+					$this->output_content();
+					do_action( "wsrw_admin_page_content_{$this->page_slug}", $this );
+					?>
+				</div>
+			</form>
+			<?php
+		} else {
+			parent::output();
+		}
+	}
+
 
 	/**
 	 * The Tools page output.
@@ -94,6 +117,7 @@ class WSRW_Admin_Page_Search_Replace extends WSRW_Admin_Page {
 		$data['sr_confirm_message']        = esc_html__( 'This will perform the search and replace operation on the selected tables. Please make sure you have a backup of your database before proceeding.', 'search-replace-wpcode' );
 		$data['no_search_term_title']      = esc_html__( 'No Search Term', 'search-replace-wpcode' );
 		$data['no_search_term_message']    = esc_html__( 'Please enter a search term to start the search and replace process.', 'search-replace-wpcode' );
+		$data['previous_searches']         = esc_html__( 'Previous Searches', 'search-replace-wpcode' );
 
 		if ( 'settings' === $this->view ) {
 			$data = $this->add_connect_strings( $data );
@@ -126,8 +150,58 @@ class WSRW_Admin_Page_Search_Replace extends WSRW_Admin_Page {
 	 * @return void
 	 */
 	public function page_hooks() {
+		$this->process_message();
+		add_action( 'admin_init', array( $this, 'submit_listener' ) );
 		add_filter( 'wsrw_admin_js_data', array( $this, 'add_page_data' ) );
 		add_filter( 'submenu_file', array( $this, 'change_current_menu' ), 15, 2 );
+	}
+
+	/**
+	 * Handle the message after the settings are saved with a redirect.
+	 *
+	 * @return void
+	 */
+	public function process_message() {
+		if ( isset( $_GET['message'] ) && 1 === absint( $_GET['message'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$this->set_success_message( __( 'Settings Saved.', 'search-replace-wpcode' ) );
+		}
+	}
+
+	/**
+	 * If the form is submitted attempt to save the values.
+	 *
+	 * @return void
+	 */
+	public function submit_listener() {
+		// Only proceed if we're on the settings view.
+		if ( 'settings' !== $this->view ) {
+			return;
+		}
+
+		if ( ! isset( $_REQUEST['wsrw_settings_nonce'] ) || ! wp_verify_nonce( sanitize_key( $_REQUEST['wsrw_settings_nonce'] ), $this->action ) ) {
+			// Nonce is missing, so we're not even going to try.
+			return;
+		}
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$settings = new WSRW_Settings();
+
+		// Save auto-preload setting.
+		$auto_preload_value = isset( $_POST['wsrw-auto-preload-search'] ) && '1' === $_POST['wsrw-auto-preload-search'];
+		$settings->update_option( 'auto_preload_search', $auto_preload_value );
+
+		wp_safe_redirect(
+			add_query_arg(
+				array(
+					'message' => 1,
+				),
+				$this->get_page_action_url()
+			)
+		);
+		exit;
 	}
 
 	/**
@@ -155,13 +229,38 @@ class WSRW_Admin_Page_Search_Replace extends WSRW_Admin_Page {
 			),
 			admin_url( 'tools.php' )
 		);
+
+		// Get the latest search from history to preload.
+		$settings                 = new WSRW_Settings();
+		$history                  = $settings->get_search_history();
+		$latest_search            = ! empty( $history ) ? $history[0] : array();
+		$preload_search           = '';
+		$preload_replace          = '';
+		$preload_case_insensitive = false;
+		$preload_tables           = array();
+		$has_preload              = false;
+
+		// Check if history is disabled via filter.
+		$max_entries = apply_filters( 'wsrw_search_history_limit', 20 );
+
+		// Check if auto-preload is enabled in settings.
+		$auto_preload = $settings->get_option( 'auto_preload_search', true );
+
+		if ( ! empty( $latest_search ) && 0 !== absint( $max_entries ) && $auto_preload ) {
+			$preload_search           = isset( $latest_search['search'] ) ? $latest_search['search'] : '';
+			$preload_replace          = isset( $latest_search['replace'] ) ? $latest_search['replace'] : '';
+			$preload_case_insensitive = isset( $latest_search['case_insensitive'] ) && $latest_search['case_insensitive'];
+			$preload_tables           = isset( $latest_search['tables'] ) && is_array( $latest_search['tables'] ) ? $latest_search['tables'] : array();
+			$has_preload              = true;
+		}
 		?>
 		<div class="wsrw-setting-row wsrw-tools">
 			<h3><?php esc_html_e( 'Search & Replace', 'search-replace-wpcode' ); ?></h3>
 			<p><?php esc_html_e( 'Use the form below to perform a search & replace operation on your database.', 'search-replace-wpcode' ); ?></p>
 		</div>
 		<hr/>
-		<form action="<?php echo esc_url( $this->get_page_action_url() ); ?>" method="post" autocomplete="off" id="wsrw-search-replace-form">
+		<?php $this->output_search_history_section(); ?>
+		<form action="<?php echo esc_url( $this->get_page_action_url() ); ?>" method="post" autocomplete="off" id="wsrw-search-replace-form" data-has-preload="<?php echo esc_attr( $has_preload ? '1' : '0' ); ?>" data-preload-search="<?php echo esc_attr( $preload_search ); ?>" data-preload-replace="<?php echo esc_attr( $preload_replace ); ?>">
 			<div class="wsrw-metabox-form-row">
 				<div class="wsrw-metabox-form-row-label">
 					<label for="wsrw-search">
@@ -169,7 +268,7 @@ class WSRW_Admin_Page_Search_Replace extends WSRW_Admin_Page {
 					</label>
 				</div>
 				<div class="wsrw-metabox-form-row-input">
-					<input type="text" id="wsrw-search" name="search" value="" placeholder="<?php esc_attr_e( 'Search for', 'search-replace-wpcode' ); ?>"/>
+					<input type="text" id="wsrw-search" name="search" value="<?php echo esc_attr( $preload_search ); ?>" placeholder="<?php esc_attr_e( 'Search for', 'search-replace-wpcode' ); ?>"/>
 				</div>
 			</div>
 			<div class="wsrw-metabox-form-row">
@@ -179,7 +278,7 @@ class WSRW_Admin_Page_Search_Replace extends WSRW_Admin_Page {
 					</label>
 				</div>
 				<div class="wsrw-metabox-form-row-input">
-					<input type="text" id="wsrw-replace" name="replace" value="" placeholder="<?php esc_attr_e( 'Replace with', 'search-replace-wpcode' ); ?>"/>
+					<input type="text" id="wsrw-replace" name="replace" value="<?php echo esc_attr( $preload_replace ); ?>" placeholder="<?php esc_attr_e( 'Replace with', 'search-replace-wpcode' ); ?>"/>
 				</div>
 			</div>
 			<div class="wsrw-metabox-form-row">
@@ -191,7 +290,7 @@ class WSRW_Admin_Page_Search_Replace extends WSRW_Admin_Page {
 				<div class="wsrw-metabox-form-row-input">
 					<?php
 					// Everything is escaped in the method.
-					echo $this->get_checkbox_toggle( false, 'wsrw-case-insensitive', '', '1' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					echo $this->get_checkbox_toggle( $preload_case_insensitive, 'wsrw-case-insensitive', '', '1' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					?>
 				</div>
 			</div>
@@ -217,10 +316,13 @@ class WSRW_Admin_Page_Search_Replace extends WSRW_Admin_Page {
 									echo '<li>' . esc_html__( 'No tables found.', 'search-replace-wpcode' ) . '</li>';
 								} else {
 									foreach ( $tables as $table ) {
+										$is_checked = in_array( $table, $preload_tables, true ) ? ' checked' : '';
 										printf(
-											'<li><label><input type="checkbox" name="tables[]" value="%1$s">%2$s</label></li>',
+											'<li><label><input type="checkbox" name="tables[]" value="%1$s"%3$s>%2$s</label></li>',
 											esc_attr( $table ),
-											esc_html( $table )
+											esc_html( $table ),
+											// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Safe attribute output, already escaped with esc_attr.
+											$is_checked
 										);
 									}
 								}
@@ -514,11 +616,55 @@ class WSRW_Admin_Page_Search_Replace extends WSRW_Admin_Page {
 	 * @return void
 	 */
 	public function output_view_settings() {
+		$settings     = new WSRW_Settings();
+		$auto_preload = $settings->get_option( 'auto_preload_search', true );
+
 		$this->metabox_row(
 			esc_html__( 'License Key', 'search-replace-wpcode' ),
 			$this->get_license_key_field(),
 			'wsrw-setting-license-key'
 		);
+		$this->metabox_row(
+			esc_html__( 'Search History', 'search-replace-wpcode' ),
+			$this->get_search_history_settings( $auto_preload ),
+			'wsrw-setting-search-history'
+		);
+
+		wp_nonce_field( $this->action, 'wsrw_settings_nonce' );
+
+		?>
+		<button class="wsrw-button" type="submit">
+			<?php esc_html_e( 'Save Changes', 'search-replace-wpcode' ); ?>
+		</button>
+		<?php
+	}
+
+	/**
+	 * Get the search history settings field.
+	 *
+	 * @param bool $auto_preload Current auto preload setting.
+	 *
+	 * @return string
+	 */
+	public function get_search_history_settings( $auto_preload ) {
+		ob_start();
+		?>
+		<div class="wsrw-metabox-form">
+			<div class="wsrw-metabox-form-row">
+				<div class="wsrw-metabox-form-row-input">
+					<?php
+					// Everything is escaped in the method.
+					echo $this->get_checkbox_toggle( $auto_preload, 'wsrw-auto-preload-search', '', '1' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					?>
+					<p class="description">
+						<?php esc_html_e( 'When enabled, the search form will automatically be populated with your most recent search when you load the page.', 'search-replace-wpcode' ); ?>
+					</p>
+				</div>
+			</div>
+		</div>
+		<?php
+
+		return ob_get_clean();
 	}
 
 	/**
@@ -1200,5 +1346,103 @@ class WSRW_Admin_Page_Search_Replace extends WSRW_Admin_Page {
 			true,
 			'left'
 		);
+	}
+
+	/**
+	 * Output the search history section.
+	 *
+	 * @return void
+	 */
+	public function output_search_history_section() {
+		// Check if history is disabled via filter.
+		$max_entries = apply_filters( 'wsrw_search_history_limit', 20 );
+		if ( 0 === absint( $max_entries ) ) {
+			return;
+		}
+
+		$settings = new WSRW_Settings();
+		$history  = $settings->get_search_history();
+
+		if ( empty( $history ) ) {
+			return;
+		}
+		?>
+		<div class="wsrw-search-history-section" id="wsrw-search-history-section">
+			<div class="wsrw-search-history-header-row">
+				<button type="button" class="wsrw-button wsrw-button-secondary" id="wsrw-open-history-modal">
+					<?php esc_html_e( 'View Previous Searches', 'search-replace-wpcode' ); ?>
+				</button>
+				<div class="wsrw-selected-search" id="wsrw-selected-search" style="display:none">
+					<span class="wsrw-selected-search-label"><?php esc_html_e( 'Using preset', 'search-replace-wpcode' ); ?>:</span>
+					<span class="wsrw-selected-search-text" id="wsrw-selected-search-text"></span>
+					<button type="button" class="wsrw-button wsrw-button-link" id="wsrw-clear-selected-search"><?php esc_html_e( 'Clear', 'search-replace-wpcode' ); ?></button>
+				</div>
+			</div>
+			<div class="wsrw-modal" id="wsrw-history-modal" style="display:none">
+				<div class="wsrw-modal-header">
+					<button type="button" class="wsrw-just-icon-button wsrw-close-modal" id="wsrw-close-history-modal"><?php wsrw_icon( 'close', 15, 14 ); ?></button>
+					<h2><?php esc_html_e( 'Previous Searches', 'search-replace-wpcode' ); ?></h2>
+				</div>
+				<div class="wsrw-history-modal-content">
+					<ul class="wsrw-search-history-list" id="wsrw-search-history-list">
+						<?php
+						foreach ( $history as $item ) {
+							$search_term  = isset( $item['search'] ) ? esc_html( $item['search'] ) : '';
+							$replace_term = isset( $item['replace'] ) ? esc_html( $item['replace'] ) : '';
+							$tables       = isset( $item['tables'] ) ? $item['tables'] : array();
+							$timestamp    = isset( $item['timestamp'] ) ? absint( $item['timestamp'] ) : 0;
+							$item_id      = isset( $item['id'] ) ? absint( $item['id'] ) : 0;
+							$case_insen   = isset( $item['case_insensitive'] ) && $item['case_insensitive'];
+
+							// Human-readable time difference.
+							$time_ago = human_time_diff( $timestamp, time() );
+							// Translators: %s is the time difference (e.g., "2 hours").
+							$time_ago_text = sprintf( esc_html__( '%s ago', 'search-replace-wpcode' ), $time_ago );
+
+							// Full date for tooltip.
+							$full_date = wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $timestamp );
+							?>
+							<li class="wsrw-search-history-item" data-search-id="<?php echo esc_attr( $item_id ); ?>">
+								<div class="wsrw-search-history-item-content"
+									data-search="<?php echo esc_attr( $item['search'] ); ?>"
+									data-replace="<?php echo esc_attr( $item['replace'] ); ?>"
+									data-tables="<?php echo esc_attr( wp_json_encode( $tables ) ); ?>"
+									data-case-insensitive="<?php echo esc_attr( $case_insen ? '1' : '0' ); ?>">
+									<div class="wsrw-search-history-item-main">
+										<span class="wsrw-search-history-search">
+											<strong><?php esc_html_e( 'Search:', 'search-replace-wpcode' ); ?></strong>
+											<?php echo esc_html( $search_term ); ?>
+										</span>
+										<?php if ( ! empty( $replace_term ) ) : ?>
+											<span class="wsrw-search-history-replace">
+												<strong><?php esc_html_e( 'Replace:', 'search-replace-wpcode' ); ?></strong>
+												<?php echo esc_html( $replace_term ); ?>
+											</span>
+										<?php endif; ?>
+									</div>
+									<div class="wsrw-search-history-item-meta">
+										<span class="wsrw-search-history-time" title="<?php echo esc_attr( $full_date ); ?>">
+											<?php echo esc_html( $time_ago_text ); ?>
+										</span>
+									</div>
+								</div>
+								<div class="wsrw-search-history-actions">
+									<button class="wsrw-button wsrw-search-history-apply" data-search-id="<?php echo esc_attr( $item_id ); ?>" title="<?php esc_attr_e( 'Apply', 'search-replace-wpcode' ); ?>">
+										<?php esc_html_e( 'Apply', 'search-replace-wpcode' ); ?>
+									</button>
+									<button class="wsrw-button wsrw-button-secondary wsrw-search-history-delete" data-search-id="<?php echo esc_attr( $item_id ); ?>" title="<?php esc_attr_e( 'Delete', 'search-replace-wpcode' ); ?>">
+										<?php esc_html_e( 'Delete', 'search-replace-wpcode' ); ?>
+									</button>
+								</div>
+							</li>
+							<?php
+						}
+						?>
+					</ul>
+				</div>
+			</div>
+			<hr/>
+		</div>
+		<?php
 	}
 }
